@@ -27,3 +27,29 @@
 *.exe
 *.out
 *.app
+
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*.class
+*.log
+
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+
+# Scala-IDE specific
+*.eml
+*.iml
+*.ipr
+*.iws
+.*.sw?
+.idea
+.scala_dependencies
+.worksheet
+
+# VirtualEnvs
+venvs/
