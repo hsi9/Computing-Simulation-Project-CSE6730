@@ -6,7 +6,57 @@ This readme is formatted using Github-flavored Markdown. Learn more [here](https
 
 ## Meeting Notes
 
-Next meeting is **2017/2/26** 20:00.
+Next meeting is **2017/3/5** 20:00.
+
+### 2017/3/5
+
+Menu:
+
+- Check Up: How everyone is faring with HDF5 and the textbook (a.k.a. How bored everyone has become with the content)
+- Take a look at the C++ code in the repository, try to figure out its use and importance
+
+---
+
+### 2017/2/26 20:00
+
+Low attendance, so moving check up to next week (3/5). Things to do have not changed (check last week’s to-do list). Noticed that Chapter 3 is around 70 pages; don’t burn yourself out trying to read all of it!
+
+A little more clarification on molecular dynamics simulations: main inputs are the topology file and configuration file.
+
+Topology File: Snapshot of the system (all major atoms in the simulation) at t=0. The process of **Topology Building** consists of:
+
+- Read topology file
+- Initialize velocities?
+- Add hydrogen atoms (not listed in structure)
+- Add water
+- Add ions (charge counterbalance)
+- (Copy structure as necessary)
+
+Configuration File: Runtime parameters (We’ll be using [YAML](http://www.yaml.org/). The v1.2 spec’s “Chapter 2. Preview” has examples of yaml files.). Configuration Building is applying the parameters to the simulation.
+
+- Temperature
+- Box size
+- Integration method
+- Forces to include
+
+HDF5 links:
+
+- Parallel/Intermediate HDF5: https://www.nersc.gov/assets/NUG-Meetings/HDF5-tutorialNUG2010.pdf
+- Basic HDF5: http://www.math-cs.gordon.edu/courses/cps343/presentations/HDF5.pdf
+- Older HDF5 Tutorial: http://web.mit.edu/fwtools_v3.1.0/www/H5.intro.html
+- Example HDF5-like format for MD: http://ambermd.org/netcdf/nctraj.pdf
+- HDF5 vs NetCDF: http://stackoverflow.com/questions/1075074/opinions-on-netcdf-vs-hdf5-for-storing-scientific-data
+
+HDF5 Things to know:
+
+- Datatypes
+- Datasets
+- Attributes
+
+C++ Things to know:
+- Good coding practice when using C++: http://www.protein.osaka-u.ac.jp/rcsfp/pi/omegagene/docs/html/dev-manual/cpp-language-guidance.html
+
+---
 
 ### 2017/2/19 21:00
 
@@ -38,7 +88,7 @@ A much more detailed explanation as a PNG image is [here](http://www.gromacs.org
 - Bond energies/forces (Part of step 1.)
 - Non-bond energies/forces (Part of step 1.)
 - PME: Electrostatics (Part of step 1.)
-- Integration: Force vectors to velocity, position (Step 2.)
+- Integration: Force vectors to velocity, position (Step 2.) - see http://www.slideshare.net/keerthanpg/integration-schemes-in-molecular-dynamics
 
 ##### Toolset
 
@@ -77,7 +127,7 @@ What we don’t already have:
 
 We have concluded on using the following mediums:
 
-- **Slack** for announcements / file transfers / git notifications
+- **Slack** for announcements / file transfers / git notifications / non-live discussions
 - **Google Hangouts** for live discussions during meetings
 
 #### Git and Github
