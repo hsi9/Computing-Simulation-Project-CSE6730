@@ -4,16 +4,36 @@ The Google Doc for this readme is available [here](https://docs.google.com/docum
 
 This readme is formatted using Github-flavored Markdown. Learn more [here](https://guides.github.com/features/mastering-markdown/).
 
+**PSA**: Midterm 1 is coming up: on-campus **2017/3/8**, distance learning **2017/3/15**.
+
 ## Meeting Notes
 
-Next meeting is **2017/3/5** 20:00.
+Next meeting is **2017/3/12** 20:00.
 
-### 2017/3/5
+### 2017/3/5 17:00
 
-Menu:
+#### Project 2
 
-- Check Up: How everyone is faring with HDF5 and the textbook (a.k.a. How bored everyone has become with the content)
-- Take a look at the C++ code in the repository, try to figure out its use and importance
+Project 2 is **high priority**! Proposal write-up is due **2017/3/17**. Draft is [here](https://www.overleaf.com/8412863mmhnzsdbxvct). Things we have to do are:
+
+- Non-distributed option (required)
+- YAWNS distributed option (required)
+- Null Message distributed option (required)
+- YAML configuration feature
+- After the fact visualization ([Trace-viewer](https://github.com/catapult-project/catapult/tree/master/tracing))
+- 3rd feature is TBD
+
+Notes on how we’ll work:
+
+- Try to work off of Scala / Java and MPI ([Java Bindings for MPI](http://blogs.cisco.com/performance/java-bindings-for-open-mpi)), if not then fall back on C++
+- Proposal submission window on T-Square will be reopened for *both on-campus and distance learning* near deadline; we will submit in said window.
+
+#### Project 3
+
+Project 3 is **low priority**!
+
+- Check Up: How everyone is faring with HDF5 and the textbook (a.k.a. How bored everyone has become with the content): Slow progress, but quite irrelevant as long as the project works out
+- Take a look at the C++ code in the repository, try to figure out its use and importance: Deferred in favor of project 2 discussion
 
 ---
 
