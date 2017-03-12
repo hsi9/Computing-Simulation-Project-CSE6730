@@ -1,0 +1,2 @@
+find_package( MPI REQUIRED )
+include_directories(${MPI_C_INCLUDE_PATH} ${MPI_CXX_INCLUDE_PATH} ${MPI_FORTRAN_INCLUDE_PATH})

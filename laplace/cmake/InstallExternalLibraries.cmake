@@ -1,0 +1,5 @@
+set(GLOBAL_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+include(ExternalProject)
+include(InstallFmtLib)
+include(InstallYamlCpp)
+include(InstallDocoptCpp)
