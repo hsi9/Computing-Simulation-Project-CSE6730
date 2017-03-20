@@ -10,11 +10,11 @@ def generate_bonds_dsets(h5file, path, num_bonds, compression=None):
 
     ids_dset = group.create_dataset("ids", (num_bonds, 2), dtype='i', compression=compression)
     ids_dset[...] = np.random.randint(1000, size=(num_bonds, 2))
-    ids_dset.attrs['column_names'] = ['i','j']
+    ids_dset.attrs['column_names'] = [b'i',b'j']
 
     params_dset = group.create_dataset("params", (num_bonds,3), dtype='d', compression=compression)
     params_dset[...] = np.random.uniform(1000, size=(num_bonds, 3))
-    params_dset.attrs['column_names'] = ['alpha','beta','gamma']
+    params_dset.attrs['column_names'] = [b'alpha',b'beta',b'gamma']
 
 def generate_angles_dsets(h5file, path, num_angles, compression=None):
     group = h5file.create_group(path)
@@ -24,11 +24,11 @@ def generate_angles_dsets(h5file, path, num_angles, compression=None):
 
     ids_dset = group.create_dataset("ids", (num_angles, 3), dtype='i', compression=compression)
     ids_dset[...] = np.random.randint(1000, size=(num_angles, 3))
-    ids_dset.attrs['column_names'] = ['i','j','k']
+    ids_dset.attrs['column_names'] = [b'i',b'j',b'k']
 
     params_dset = group.create_dataset("params", (num_angles,3), dtype='d', compression=compression)
     params_dset[...] = np.random.uniform(1000, size=(num_angles, 3))
-    params_dset.attrs['column_names'] = ['alpha','beta','gamma','delta']
+    params_dset.attrs['column_names'] = [b'alpha',b'beta',b'gamma',b'delta']
 
 def generate_dihedral_dsets(h5file, path, num_dihedrals, compression=None):
     group = h5file.create_group(path)
@@ -38,11 +38,11 @@ def generate_dihedral_dsets(h5file, path, num_dihedrals, compression=None):
 
     ids_dset = group.create_dataset("ids", (num_dihedrals, 4), dtype='i', compression=compression)
     ids_dset[...] = np.random.randint(1000, size=(num_dihedrals, 4))
-    ids_dset.attrs['column_names'] = ['i','j','k','l']
+    ids_dset.attrs['column_names'] = [b'i',b'j',b'k',b'l']
 
     params_dset = group.create_dataset("params", (num_dihedrals, 4), dtype='d', compression=compression)
     params_dset[...] = np.random.uniform(1000, size=(num_dihedrals, 4))
-    params_dset.attrs['column_names'] = ['alpha','beta','gamma','delta','epsilon']
+    params_dset.attrs['column_names'] = [b'alpha',b'beta',b'gamma',b'delta',b'epsilon']
 
 
 def generate_trajectory(h5file, path, num_atoms, compression=None):
