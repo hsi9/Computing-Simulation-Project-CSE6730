@@ -4,11 +4,19 @@ The Google Doc for this readme is available [here](https://docs.google.com/docum
 
 This readme is formatted using Github-flavored Markdown. Learn more [here](https://guides.github.com/features/mastering-markdown/).
 
-**PSA**: Midterm 1 is coming up: on-campus **2017/3/8**, distance learning **2017/3/15**.
+**PSA**: Midterm 1 is coming up: distance learning **2017/3/15**. Good luck! (Hope you get a cheat sheet)
 
 ## Meeting Notes
 
-Next meeting is **2017/3/12** 20:00.
+Next meeting is **2017/3/19** 20:00.
+
+### 2017/3/12 20:00
+
+#### Project 2
+
+Feature 3: HDF5. Proposal’s Done!
+
+---
 
 ### 2017/3/5 17:00
 
