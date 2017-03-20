@@ -4,11 +4,43 @@ The Google Doc for this readme is available [here](https://docs.google.com/docum
 
 This readme is formatted using Github-flavored Markdown. Learn more [here](https://guides.github.com/features/mastering-markdown/).
 
-**PSA**: Midterm 1 is coming up: on-campus **2017/3/8**, distance learning **2017/3/15**.
-
 ## Meeting Notes
 
-Next meeting is **2017/3/12** 20:00.
+Next meeting is **2017/3/26** 20:00.
+
+### 2017/3/19 20:20
+
+#### Project 2
+
+We have 3 meetings left before the due date (2017/4/7 + DL 1 week = 2017/4/14), so start early! We need the last meeting to talk about things like data-collection runs, report writing, and video presentation creation (yes that is a thing, look on T-Square), so it’d be best to think of the implementations as due in 2.5 weeks, i.e. 2017/4/4. The remaining 10 days will be used for code review and non-code parts.
+
+Work has been assigned as follows:
+
+- Non-distributed
+    - Assign: @ssugimoto3
+- Null Message
+    - Assign: @ssugimoto3
+- YAWNS
+    - Assign: @cseng3
+- Trace-Viewer
+    - Figure out how Catapult works, specify output format (Assign: @fxiong32, @hsi9)
+- HDF5
+    - PR #9 (Assign: @bma36)
+    - Maybe make object-based bindings? Low priority (Assign: @bma36)
+    - Figure out schema for airplane table and airport table (Assign: @ssugimoto3). Due 2017/3/21.
+- YAML
+    - PR #9 (Assign: @bma36)
+    - Figure out configuration parameters that we’re going to use (Assign: @ssugimoto3). Due 2017/3/20.
+
+---
+
+### 2017/3/12 20:00
+
+#### Project 2
+
+Feature 3: HDF5. Proposal’s Done!
+
+---
 
 ### 2017/3/5 17:00
 
