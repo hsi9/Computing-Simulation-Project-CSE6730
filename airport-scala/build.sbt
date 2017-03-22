@@ -5,7 +5,7 @@ scalaVersion := "2.11.8"
 val CommonsIoVersion = "2.5"
 val LogbackVersion = "1.1.3"
 val JodaTimeVersion = "2.9.4"
-val MoutingyamlVersion = "0.4.0"
+val MoultingyamlVersion = "0.4.0"
 
 resolvers ++= Seq(
     "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"
@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
     "commons-io" % "commons-io" % CommonsIoVersion,
     "ch.qos.logback" % "logback-classic" % LogbackVersion % "runtime",
     "joda-time" % "joda-time" % JodaTimeVersion,
-    "net.jcazevedo" %% "moultingyaml" % MoutingyamlVersion
+    "net.jcazevedo" %% "moultingyaml" % MoultingyamlVersion
   )
 
 enablePlugins(JavaAppPackaging)
