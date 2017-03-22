@@ -17,20 +17,20 @@ We have 3 meetings left before the due date (2017/4/7 + DL 1 week = 2017/4/14), 
 Work has been assigned as follows:
 
 - Non-distributed
-    - Assign: @ssugimoto3
+    - Assign: [@ssugimoto3](https://github.gatech.edu/ssugimoto3)
 - Null Message
-    - Assign: @ssugimoto3
+    - Assign: [@ssugimoto3](https://github.gatech.edu/ssugimoto3)
 - YAWNS
-    - Assign: @cseng3
+    - Assign: [@cseng3](https://github.gatech.edu/cseng3)
 - Trace-Viewer
-    - Figure out how Catapult works, specify output format (Assign: @fxiong32, @hsi9)
+    - Figure out how Catapult works, specify output format (Assign: [@fxiong32](https://github.gatech.edu/fxiong32), [@hsi9](https://github.gatech.edu/hsi9))
 - HDF5
-    - PR #9 (Assign: @bma36)
-    - Maybe make object-based bindings? Low priority (Assign: @bma36)
-    - Figure out schema for airplane table and airport table (Assign: @ssugimoto3). Due 2017/3/21.
+    - PR [#9](https://github.gatech.edu/bma36/cse6730/pull/9) (Assign: [@bma36](https://github.gatech.edu/bma36))
+    - Maybe make object-based bindings? Low priority (Assign: [@bma36](https://github.gatech.edu/bma36))
+    - Figure out schema for airplane table and airport table (Assign: [@ssugimoto3](https://github.gatech.edu/ssugimoto3)). Due 2017/3/21.
 - YAML
-    - PR #9 (Assign: @bma36)
-    - Figure out configuration parameters that we’re going to use (Assign: @ssugimoto3). Due 2017/3/20.
+    - PR [#9](https://github.gatech.edu/bma36/cse6730/pull/9) (Assign: [@bma36](https://github.gatech.edu/bma36))
+    - Figure out configuration parameters that we’re going to use (Assign: [@ssugimoto3](https://github.gatech.edu/ssugimoto3)). Due 2017/3/20.
 
 ---
 
