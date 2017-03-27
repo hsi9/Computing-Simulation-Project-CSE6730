@@ -6,13 +6,31 @@ This readme is formatted using Github-flavored Markdown. Learn more [here](https
 
 ## Meeting Notes
 
-Next meeting is **2017/3/26** 20:00.
+Next meeting is **2017/4/2** 20:00.
+
+### 2017/3/26 20:30
+
+### Project 2
+
+Progress report:
+
+- [@bma36](https://github.gatech.edu/bma36): Almost done with YAML configuration; partway through HDF5 reading.
+- [@cseng3](https://github.gatech.edu/cseng3): Confirmed build; started writing code.
+- [@hsi9](https://github.gatech.edu/hsi9): learning scala.
+- [@ssugimoto3](https://github.gatech.edu/ssugimoto3): YAML, HDF5 Schema draft on Slack. Slow but non-zero progress on Scala. Going to a hackathon next weekend, so will have significant progress by then. (Side effect: Probably missing next week’s meeting.)
+- [@fxiong32](https://github.gatech.edu/fxiong32): Just reading and learning.
+
+Changes to assignments:
+
+- Reassigning non-distributed to [@hsi9](https://github.gatech.edu/hsi9) and [@fxiong32](https://github.gatech.edu/fxiong32). Notification around 2017/3/31 to [@ssugimoto3](https://github.gatech.edu/ssugimoto3) if dropping it due to workload.
+- Adding [@ssugimoto3](https://github.gatech.edu/ssugimoto3) to Trace-Viewer if help requested by 2017/3/31.
+- **Moving code writing due date to 2017/4/7.** Meeting on 2017/4/2 will be progress report 2, with possible discussion on starting the report and video presentation. Meeting on 2017/4/9 will touch on code review if necessary and will focus on report writing and video presentation creation.
 
 ### 2017/3/19 20:20
 
 #### Project 2
 
-We have 3 meetings left before the due date (2017/4/7 + DL 1 week = 2017/4/14), so start early! We need the last meeting to talk about things like data-collection runs, report writing, and video presentation creation (yes that is a thing, look on T-Square), so it’d be best to think of the implementations as due in 2.5 weeks, i.e. 2017/4/4. The remaining 10 days will be used for code review and non-code parts.
+We have 3 meetings left before the due date (2017/4/7 + DL 1 week = 2017/4/14), so start early! We need the last meeting to talk about things like data-collection runs, report writing, and video presentation creation (yes that is a thing, look on T-Square), so it’d be best to think of the implementations as due in 2.5 weeks, i.e. ~~2017/4/4~~ 2017/4/7. The remaining 10 days will be used for code review and non-code parts.
 
 Work has been assigned as follows:
 
@@ -27,10 +45,10 @@ Work has been assigned as follows:
 - HDF5
     - PR [#9](https://github.gatech.edu/bma36/cse6730/pull/9) (Assign: [@bma36](https://github.gatech.edu/bma36))
     - Maybe make object-based bindings? Low priority (Assign: [@bma36](https://github.gatech.edu/bma36))
-    - Figure out schema for airplane table and airport table (Assign: [@ssugimoto3](https://github.gatech.edu/ssugimoto3)). Due 2017/3/21.
+    - Figure out schema for airplane table and airport table (Assign: [@ssugimoto3](https://github.gatech.edu/ssugimoto3)). ~~Due 2017/3/21.~~ Done 2017/3/22.
 - YAML
     - PR [#9](https://github.gatech.edu/bma36/cse6730/pull/9) (Assign: [@bma36](https://github.gatech.edu/bma36))
-    - Figure out configuration parameters that we’re going to use (Assign: [@ssugimoto3](https://github.gatech.edu/ssugimoto3)). Due 2017/3/20.
+    - Figure out configuration parameters that we’re going to use (Assign: [@ssugimoto3](https://github.gatech.edu/ssugimoto3)). ~~Due 2017/3/20.~~ Done 2017/3/21.
 
 ---
 
