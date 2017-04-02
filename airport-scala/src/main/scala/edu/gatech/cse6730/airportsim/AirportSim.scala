@@ -56,22 +56,32 @@ object AirportSim {
         MPI.Init(args)
 
         if (MPI.COMM_WORLD.getRank() == 0) {
+          println(s"Number of MPI processes: ${MPI.COMM_WORLD.getSize()}")
+
           val lax = Airport("LAX", 10, 10, (33.9416, 118.4085))
           val landingEvent = AirportEvent(5, lax, AirportEvent.PLANE_ARRIVES);
           Simulator.schedule(landingEvent)
           Simulator.stopAt(50)
           Simulator.run()
 
-          // test HDF5
-          val fileId = H5Fopen(cliArgs.dataFile, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT)
-
           // test yaml config
           val config = SimulatorConfig.fromFile(cliArgs.configFile)
           println(s"\nParsed SimulatorConfig: ${config}")
+
+          // test HDF5
+          val airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
+          println(s"\nParsed Airplanes from HDF5 file:")
+          airplanes.foreach { plane =>
+            println(plane)
+          }
+          val airports = hdf5.Airport.loadFromH5File(cliArgs.dataFile, "airports/table")
+          println(s"\nParsed Airports from HDF5 file:")
+          airports.foreach { airport =>
+            println(airport)
+          }
         }
 
         computePiInParallel()
-
         MPI.Finalize()
 
       case None =>

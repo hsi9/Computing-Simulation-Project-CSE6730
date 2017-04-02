@@ -104,7 +104,18 @@ During runtime, the shared libraries `libmpi_java.dylib` and `libhdf5_java.dylib
 
 ```bash
 # Run on 4 MPI processes
-localhost:airport-scala local$ /usr/local/opt/open-mpi/bin/mpirun -np 4  java -jar -Djava.library.path=/usr/local/opt/open-mpi/lib:/usr/local/opt/hdf5/lib  target/scala-2.11/airportsim-assembly-0.1.0.jar
+localhost:airport-scala local$ /usr/local/opt/open-mpi/bin/mpirun -np 4  java -jar -Djava.library.path=/usr/local/opt/open-mpi/lib:/usr/local/opt/hdf5-mpi/lib  target/scala-2.11/airportsim-assembly-0.1.0.jar --config ~/cse6730/airport-scala/src/main/resources/SimulatorConfiguration.yaml --data ~/cse6730/airport-scala/src/main/python/airportsim.h5
+```
+
+### Generate Sample Data for Simulation:
+
+Scripts for generating sample HDF5 data for input into the simulation engine are provided under `airport-scala/src/main/python`:
+
+```bash
+$ python generate_sample_data.py
+
+$ ls
+airportsim.h5		generate_sample_data.py
 ```
 
 

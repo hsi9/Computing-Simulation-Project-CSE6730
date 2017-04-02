@@ -1,11 +1,14 @@
 import sbt._
 import Keys._
+import sbtassembly.AssemblyPlugin.autoImport._
 
 object AirportSimBuild extends Build {
   val Name = "airportsim"
 
   lazy val project = Project(Name, file("."))
     .settings(
+      // optional
+      // mainClass in assembly := Some("edu.gatech.cse6730.airportsim.AirportSim"),
       publishMavenStyle := true,
       autoScalaLibrary := true,
       isSnapshot := true
