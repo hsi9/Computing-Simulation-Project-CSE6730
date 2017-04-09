@@ -7,6 +7,8 @@ import net.jcazevedo.moultingyaml._
 import net.jcazevedo.moultingyaml.DefaultYamlProtocol._
 import scopt._
 
+import scala.util.Random
+
 case class AirportSimCliArgs(configFile: String = "",
                              dataFile: String = "")
 
@@ -97,8 +99,10 @@ object AirportSim {
           airports_mapped.foreach { airport =>
             airport.setAirportList(airports_mapped)
           }
-          for( (airplane, airport) <- (airplanes_mapped zip airports_mapped) ) {
-            Simulator.schedule(AirportEvent(5, airport, AirportEvent.PLANE_ARRIVES, airplane))
+          val randGen = new scala.util.Random
+          val airplanes_shuffled = randGen.shuffle(airplanes_mapped)
+          for( (airplane, airport) <- (airplanes_shuffled zip airports_mapped) ) {
+            Simulator.schedule(AirportEvent(randGen.nextInt(5), airport, AirportEvent.PLANE_ARRIVES, airplane))
           }
 
           Simulator.stopAt(50)

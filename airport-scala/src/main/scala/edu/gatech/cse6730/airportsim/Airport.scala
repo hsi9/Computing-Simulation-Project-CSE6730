@@ -63,6 +63,7 @@ case class Airport(id: Int,
       case AirportEvent.PLANE_DEPARTS =>
         onTheGround = onTheGround + 1
         println(s"${Simulator.getCurrentTime}: Plane requesting to take off from ${this.icaoCode}")
+        numDeparted = numDeparted + airEvent.plane.loadPassengers
         if (runwayFree) {
           Simulator.schedule(AirportEvent(0, this, AirportEvent.PLANE_TAKES_OFF, airEvent.plane))
         } else {
@@ -73,6 +74,7 @@ case class Airport(id: Int,
       case AirportEvent.PLANE_LANDED =>
         inTheAir = inTheAir - 1
         println(s"${Simulator.getCurrentTime}: Plane lands at ${this.icaoCode}")
+        numArrived = numArrived + airEvent.plane.unloadPassengers
         Simulator.schedule(AirportEvent(requiredTimeOnGround, this, AirportEvent.PLANE_DEPARTS, airEvent.plane))
 
       case AirportEvent.PLANE_TAKES_OFF =>
