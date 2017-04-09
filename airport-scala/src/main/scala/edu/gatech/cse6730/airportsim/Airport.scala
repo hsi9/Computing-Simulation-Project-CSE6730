@@ -44,6 +44,12 @@ case class Airport(id: Int,
     val theta = lon1 - lon2
     val dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta))
     rad2deg(Math.acos(dist)) * 60 * 1.1515 * 1.609344;
+    //60 is the number of minutes in a degree;
+    //1.1515 is the number of statute miles in a nautical mile;
+    //and 1.609344 is the number of kilometres in a mile.
+    //One nautical mile is the length of one minute of latitude at the equator.
+    //Source: http://stackoverflow.com/questions/389211/geospatial-coordinates-and-distance-in-kilometers
+    //Result is in KILOMETRES.
   }
 
   override def handle(event: Event): Unit = {

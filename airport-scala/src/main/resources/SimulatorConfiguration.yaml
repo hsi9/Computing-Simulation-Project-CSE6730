@@ -1,7 +1,7 @@
 ---
 planeCount: 500                   # number of planes to generate
 planeDistribution: ONE_AIRPORT    # how to distribute planes initially. UNIFORM, ONE_AIRPORT
-planeUsesHdf5Data: false          # when false, all planes must fall back to default type
+planeUsesHdf5Data: true           # when false, all planes must fall back to default type
 logStatistics: true               # log simulation statistics at regular intervals
 logInterval: 50                   # interval for log_statistics. irrelevant when log_statistics: false
 logTraceViewer: false             # log output for trace-viewer at simulator completion

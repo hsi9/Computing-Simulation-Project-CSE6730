@@ -7,6 +7,7 @@ import net.jcazevedo.moultingyaml._
 import net.jcazevedo.moultingyaml.DefaultYamlProtocol._
 import scopt._
 
+import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
 case class AirportSimCliArgs(configFile: String = "",
@@ -63,19 +64,31 @@ object AirportSim {
           val config = SimulatorConfig.fromFile(cliArgs.configFile)
           println(s"\nParsed SimulatorConfig: ${config}")
 
+          var airplanes : List[hdf5.Airplane] = List.empty
+          var airplanes_mapped : List[Airplane] = List.empty
           // load airplanes from HDF5 file
-          val airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
-          println(s"\nParsed Airplanes from HDF5 file:")
-          airplanes.foreach { plane =>
-            println(plane)
-          }
-          // hdf5.Airplane to Airplane conversion
-          val airplanes_mapped = airplanes.map { plane =>
-            new Airplane(plane.id,
-                          plane.name,
-                          plane.manufacturer,
-                          plane.speed,
-                          plane.capacity)
+          if (config.planeUsesHdf5Data) {
+            airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
+            println(s"\nParsed Airplanes from HDF5 file:")
+            airplanes.foreach { plane =>
+              println(plane)
+            }
+            // hdf5.Airplane to Airplane conversion
+            airplanes_mapped = airplanes.map { plane =>
+              new Airplane(plane.id,
+                            plane.name,
+                            plane.manufacturer,
+                            plane.speed,
+                            plane.capacity)
+            }
+          } else {
+            var airplanes_mapped_buffer = new ArrayBuffer[Airplane]
+            for (i <- 1 to config.planeCount) {
+              airplanes_mapped_buffer += new Airplane(i, "787-8 Dreamliner", "Boeing", 17.35479, 242)
+              // http://www.boeing.com/commercial/787/by-design/#/all-model-performance-summary
+              // Speed is in KILOMETRES PER MINUTE. (Simulator runs on minutes)
+            }
+            airplanes_mapped = airplanes_mapped_buffer.toList
           }
 
           // load airports from HDF5 file
@@ -100,12 +113,29 @@ object AirportSim {
             airport.setAirportList(airports_mapped)
           }
           val randGen = new scala.util.Random
-          val airplanes_shuffled = randGen.shuffle(airplanes_mapped)
-          for( (airplane, airport) <- (airplanes_shuffled zip airports_mapped) ) {
-            Simulator.schedule(AirportEvent(randGen.nextInt(5), airport, AirportEvent.PLANE_ARRIVES, airplane))
+          config.planeDistribution match {
+            case PlaneDistribution.ONE_AIRPORT =>
+              for (i <- 0 to config.planeCount) {
+                val airplane = airplanes_mapped(randGen.nextInt(airplanes_mapped.length))
+                val airport = airports_mapped(0)
+                Simulator.schedule(AirportEvent(randGen.nextInt(5), airport, AirportEvent.PLANE_ARRIVES, airplane))
+              }
+            case PlaneDistribution.UNIFORM =>
+              for(i <- 0 to config.planeCount) {
+                val airplane = airplanes_mapped(randGen.nextInt(airplanes_mapped.length))
+                val airport = airports_mapped(randGen.nextInt(airports_mapped.length))
+                Simulator.schedule(AirportEvent(randGen.nextInt(5), airport, AirportEvent.PLANE_ARRIVES, airplane))
+              }
           }
 
-          Simulator.stopAt(50)
+          Simulator.stopAt(config.runningTime)
+
+          if (config.logStatistics) {
+            for (i <- 1 to (config.runningTime / config.logInterval) ) {
+              Simulator.stopAt(config.logInterval * i)
+              Simulator.run()
+            }
+          }
           Simulator.run()
         }
 
