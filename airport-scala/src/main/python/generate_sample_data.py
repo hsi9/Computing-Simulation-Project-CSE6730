@@ -1,4 +1,4 @@
-import h5py, random, string
+import h5py, random, string, csv
 import numpy as np
 
 def generate_airplanes(h5file, path, num_airplanes, compression=None):
@@ -47,6 +47,24 @@ def generate_airports(h5file, path, num_airports, compression=None):
             ))
         return data
 
+    def generate_data_from_file(n):
+        data = []
+        with open("../resources/airports.csv", newline='') as csvfile:
+            csvreader = csv.DictReader(csvfile, delimiter=',', quotechar='|')
+            for i,row in zip(range(n), csvreader):
+                data.append((
+                    i,
+                    row['name'],
+                    row['city'],
+                    row['country'],
+                    row['iata'],
+                    row['icao'],
+                    row['lat'],
+                    row['lon'],
+                    row['alt']
+                ))
+        return data
+
     if path not in h5file:
         group = h5file.create_group(path)
     else:
@@ -54,18 +72,19 @@ def generate_airports(h5file, path, num_airports, compression=None):
 
     compound_type = np.dtype([
         ('id', 'i'),
-        ('name', 'S10'),
-        ('city', 'S10'),
-        ('country', 'S10'),
-        ('iata', 'S10'),
-        ('icao', 'S10'),
+        ('name', 'S50'),
+        ('city', 'S30'),
+        ('country', 'S30'),
+        ('iata', 'S3'),
+        ('icao', 'S4'),
         ('latitude', 'd'),
         ('longitude', 'd'),
         ('altitude', 'd'),
     ])
 
     airports_dset = group.create_dataset("table", (num_airports,), dtype=compound_type, compression=compression)
-    airports_dset[...] = np.array(generate_random_data(num_airports), dtype = compound_type)
+    # airports_dset[...] = np.array(generate_random_data(num_airports), dtype = compound_type)
+    airports_dset[...] = np.array(generate_data_from_file(num_airports), dtype = compound_type)
 
 def create_h5file():
     h5file = h5py.File("airportsim.h5", "w")
