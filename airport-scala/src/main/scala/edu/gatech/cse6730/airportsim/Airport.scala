@@ -1,12 +1,29 @@
 package edu.gatech.cse6730.airportsim
 
-case class Airport(name: String,
+import scala.collection.mutable.Queue
+import scala.util.Random
+
+case class Airport(id: Int,
+                   name: String,
+                   city: String,
+                   country: String,
+                   iataCode: String,
+                   icaoCode: String,
                    runwayTimeToLand: Double,
                    requiredTimeOnGround: Double,
                    gpsCoords: (Double, Double)) extends EventHandler {
   private var inTheAir = 0
   private var onTheGround = 0
-  private var freeToLand = true
+  private var runwayFree = true
+  private var numArrived = 0
+  private var numDeparted = 0
+
+  private val randGen = new scala.util.Random(this.id + numArrived*numDeparted)
+
+  private var runwayQueue = new Queue[(Double, Int, Airplane)]
+  private var timeGrounded = 0.0
+  private var timeCircling = 0.0
+  private var airportList : List[Airport] = List.empty
 
   private def deg2rad(deg: Double): Double = {
     deg * Math.PI / 180.0
@@ -14,6 +31,10 @@ case class Airport(name: String,
 
   private def rad2deg(rad: Double): Double = {
     rad * 180.0 / Math.PI
+  }
+
+  def setAirportList(newList: List[Airport]) {
+    airportList = newList
   }
 
   def distanceTo(other: Airport): Double = {
@@ -31,25 +52,59 @@ case class Airport(name: String,
     airEvent.eventType match {
       case AirportEvent.PLANE_ARRIVES =>
         inTheAir = inTheAir + 1
-        println(s"${Simulator.getCurrentTime}: Plane arrived at airport")
-        if (freeToLand) {
-          Simulator.schedule(AirportEvent(runwayTimeToLand, this, AirportEvent.PLANE_LANDED))
+        println(s"${Simulator.getCurrentTime}: Plane requesting to land at ${this.icaoCode}")
+        if (runwayFree) {
+          Simulator.schedule(AirportEvent(runwayTimeToLand, this, AirportEvent.PLANE_LANDED, airEvent.plane))
+        } else {
+          runwayQueue += ((Simulator.getCurrentTime, AirportEvent.PLANE_LANDED, airEvent.plane))
+          Simulator.schedule(AirportEvent(0, this, AirportEvent.RUNWAY_EVENT, null))
         }
 
       case AirportEvent.PLANE_DEPARTS =>
-        onTheGround = onTheGround - 1;
-        println(s"${Simulator.getCurrentTime}: Plane departs from airport")
-        Simulator.schedule(AirportEvent(20/*flightTime*/, this, AirportEvent.PLANE_ARRIVES))
+        onTheGround = onTheGround + 1
+        println(s"${Simulator.getCurrentTime}: Plane requesting to take off from ${this.icaoCode}")
+        if (runwayFree) {
+          Simulator.schedule(AirportEvent(0, this, AirportEvent.PLANE_TAKES_OFF, airEvent.plane))
+        } else {
+          runwayQueue += ((Simulator.getCurrentTime, AirportEvent.PLANE_TAKES_OFF, airEvent.plane))
+          Simulator.schedule(AirportEvent(0, this, AirportEvent.RUNWAY_EVENT, null))
+        }
 
       case AirportEvent.PLANE_LANDED =>
-        inTheAir = inTheAir - 1;
-        println(s"${Simulator.getCurrentTime}: Plane lands at airport")
-        Simulator.schedule(AirportEvent(requiredTimeOnGround, this, AirportEvent.PLANE_DEPARTS))
-        inTheAir match {
-          case 0 =>
-            freeToLand = true
-          case _ =>
-            Simulator.schedule(AirportEvent(runwayTimeToLand, this, AirportEvent.PLANE_LANDED))
+        inTheAir = inTheAir - 1
+        println(s"${Simulator.getCurrentTime}: Plane lands at ${this.icaoCode}")
+        Simulator.schedule(AirportEvent(requiredTimeOnGround, this, AirportEvent.PLANE_DEPARTS, airEvent.plane))
+
+      case AirportEvent.PLANE_TAKES_OFF =>
+        onTheGround = onTheGround - 1
+        println(s"${Simulator.getCurrentTime}: Plane takes off from ${this.icaoCode}")
+        var destination = this.airportList(this.randGen.nextInt(this.airportList.length))
+        while (destination.id == this.id) {
+          destination = this.airportList(this.randGen.nextInt(this.airportList.length))
+        }
+        Simulator.schedule(AirportEvent(distanceTo(destination), this, AirportEvent.PLANE_ARRIVES, airEvent.plane))
+
+      case AirportEvent.RUNWAY_EVENT =>
+        if (runwayQueue.length >= 1) {
+          val (queuedTime, queuedEventType, queuedPlane) = runwayQueue.dequeue
+          var queuedEventCompletionTime = 0.0
+          queuedEventType match {
+            case AirportEvent.PLANE_LANDED =>
+              queuedEventCompletionTime = runwayTimeToLand
+              Simulator.schedule(AirportEvent(queuedEventCompletionTime, this, AirportEvent.PLANE_LANDED, queuedPlane))
+              timeCircling = timeCircling + (Simulator.getCurrentTime - queuedTime)
+
+            case AirportEvent.PLANE_TAKES_OFF =>
+              queuedEventCompletionTime = 0.0
+              Simulator.schedule(AirportEvent(queuedEventCompletionTime, this, AirportEvent.PLANE_TAKES_OFF, queuedPlane))
+              timeGrounded = timeGrounded + (Simulator.getCurrentTime - queuedTime)
+          }
+          if (runwayQueue.length >= 1) {
+            Simulator.schedule(AirportEvent(queuedEventCompletionTime, this, AirportEvent.RUNWAY_EVENT, null))
+          }
+        }
+        if (runwayQueue.length == 0) {
+          runwayFree = true
         }
     }
   }

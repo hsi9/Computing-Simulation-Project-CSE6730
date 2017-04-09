@@ -57,31 +57,55 @@ object AirportSim {
 
         if (MPI.COMM_WORLD.getRank() == 0) {
           println(s"Number of MPI processes: ${MPI.COMM_WORLD.getSize()}")
-
-          val lax = Airport("LAX", 10, 10, (33.9416, 118.4085))
-          val landingEvent = AirportEvent(5, lax, AirportEvent.PLANE_ARRIVES);
-          Simulator.schedule(landingEvent)
-          Simulator.stopAt(50)
-          Simulator.run()
-
           // test yaml config
           val config = SimulatorConfig.fromFile(cliArgs.configFile)
           println(s"\nParsed SimulatorConfig: ${config}")
 
-          // test HDF5
+          // load airplanes from HDF5 file
           val airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
           println(s"\nParsed Airplanes from HDF5 file:")
           airplanes.foreach { plane =>
             println(plane)
           }
+          // hdf5.Airplane to Airplane conversion
+          val airplanes_mapped = airplanes.map { plane =>
+            new Airplane(plane.id,
+                          plane.name,
+                          plane.manufacturer,
+                          plane.speed,
+                          plane.capacity)
+          }
+
+          // load airports from HDF5 file
           val airports = hdf5.Airport.loadFromH5File(cliArgs.dataFile, "airports/table")
           println(s"\nParsed Airports from HDF5 file:")
           airports.foreach { airport =>
             println(airport)
           }
+          // hdf5.Airport to Airport conversion
+          val airports_mapped = airports.map { airport =>
+            new Airport(airport.id,
+                        airport.name,
+                        airport.city,
+                        airport.country,
+                        airport.iataCode,
+                        airport.icaoCode,
+                        10,
+                        10,
+                        (airport.latitude, airport.longitude))
+          }
+          airports_mapped.foreach { airport =>
+            airport.setAirportList(airports_mapped)
+          }
+          for( (airplane, airport) <- (airplanes_mapped zip airports_mapped) ) {
+            Simulator.schedule(AirportEvent(5, airport, AirportEvent.PLANE_ARRIVES, airplane))
+          }
+
+          Simulator.stopAt(50)
+          Simulator.run()
         }
 
-        computePiInParallel()
+        // computePiInParallel()
         MPI.Finalize()
 
       case None =>
