@@ -60,9 +60,10 @@ object AirportSim {
 
         if (MPI.COMM_WORLD.getRank() == 0) {
           println(s"Number of MPI processes: ${MPI.COMM_WORLD.getSize()}")
-          // test yaml config
+          // load yaml config
           val config = SimulatorConfig.fromFile(cliArgs.configFile)
           println(s"\nParsed SimulatorConfig: ${config}")
+          Simulator.setConfig(config)
 
           var airplanes : List[hdf5.Airplane] = List.empty
           var airplanes_mapped : List[Airplane] = List.empty
@@ -107,12 +108,13 @@ object AirportSim {
                         airport.icaoCode,
                         10,
                         10,
-                        (airport.latitude, airport.longitude),
-                        config)
+                        (airport.latitude, airport.longitude))
           }
           airports_mapped.foreach { airport =>
             airport.setAirportList(airports_mapped)
           }
+          Airport.setConfig(config)
+
           val randGen = new scala.util.Random
           config.planeDistribution match {
             case PlaneDistribution.ONE_AIRPORT =>

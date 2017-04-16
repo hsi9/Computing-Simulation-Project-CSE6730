@@ -41,4 +41,17 @@ object SimulatorConfig {
   def fromFile(filepath: String): SimulatorConfig = {
     Source.fromFile(filepath).mkString.parseYaml.convertTo[SimulatorConfig]
   }
+
+  def defaultConfig(): SimulatorConfig = {
+    new SimulatorConfig(500,
+                        PlaneDistribution.ONE_AIRPORT,
+                        false,
+                        false,
+                        false,
+                        50,
+                        false,
+                        false,
+                        RunningOption.NON_DISTRIBUTED,
+                        1000)
+  }
 }
