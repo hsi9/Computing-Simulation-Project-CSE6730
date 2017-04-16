@@ -107,7 +107,8 @@ object AirportSim {
                         airport.icaoCode,
                         10,
                         10,
-                        (airport.latitude, airport.longitude))
+                        (airport.latitude, airport.longitude),
+                        config)
           }
           airports_mapped.foreach { airport =>
             airport.setAirportList(airports_mapped)
@@ -132,11 +133,22 @@ object AirportSim {
 
           if (config.logStatistics) {
             for (i <- 1 to (config.runningTime / config.logInterval) ) {
-              Simulator.stopAt(config.logInterval * i)
+              val logTime = config.logInterval * i
+              Simulator.stopAt(logTime)
               Simulator.run()
+              airports_mapped.foreach { airport =>
+                airport.logStats()
+              }
             }
           }
+
           Simulator.run()
+
+          if (config.logStatistics) {
+            airports_mapped.foreach { airport =>
+              airport.logStats()
+            }
+          }
         }
 
         // computePiInParallel()

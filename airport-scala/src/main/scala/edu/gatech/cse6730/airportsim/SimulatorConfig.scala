@@ -14,8 +14,10 @@ object RunningOption extends Enumeration {
 case class SimulatorConfig(planeCount: Int,
                            planeDistribution: PlaneDistribution.Value,
                            planeUsesHdf5Data: Boolean,
+                           logRealTimeEvents: Boolean,
                            logStatistics: Boolean,
                            logInterval: Int,
+                           shortLogs: Boolean,
                            logTraceViewer: Boolean,
                            runningOption: RunningOption.Value,
                            runningTime: Int)
@@ -31,7 +33,7 @@ object SimulatorConfigProtocol extends DefaultYamlProtocol {
     def read(value: YamlValue) = RunningOption.withName(value.asInstanceOf[YamlString].value)
   }
 
-  implicit val simulatorConfigFormat = yamlFormat8(SimulatorConfig.apply)
+  implicit val simulatorConfigFormat = yamlFormat10(SimulatorConfig.apply)
 }
 
 object SimulatorConfig {

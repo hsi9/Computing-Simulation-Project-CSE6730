@@ -11,7 +11,8 @@ case class Airport(id: Int,
                    icaoCode: String,
                    runwayTimeToLand: Double,
                    requiredTimeOnGround: Double,
-                   gpsCoords: (Double, Double)) extends EventHandler {
+                   gpsCoords: (Double, Double),
+                   config: SimulatorConfig) extends EventHandler {
   private var inTheAir = 0
   private var onTheGround = 0
   private var runwayFree = true
@@ -58,7 +59,7 @@ case class Airport(id: Int,
     airEvent.eventType match {
       case AirportEvent.PLANE_ARRIVES =>
         inTheAir = inTheAir + 1
-        println(s"${Simulator.getCurrentTime}: Plane requesting to land at ${this.icaoCode}")
+        if (config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane requesting to land at ${this.icaoCode}")
         if (runwayFree) {
           Simulator.schedule(AirportEvent(runwayTimeToLand, this, AirportEvent.PLANE_LANDED, airEvent.plane))
         } else {
@@ -68,7 +69,7 @@ case class Airport(id: Int,
 
       case AirportEvent.PLANE_DEPARTS =>
         onTheGround = onTheGround + 1
-        println(s"${Simulator.getCurrentTime}: Plane requesting to take off from ${this.icaoCode}")
+        if (config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane requesting to take off from ${this.icaoCode}")
         numDeparted = numDeparted + airEvent.plane.loadPassengers
         if (runwayFree) {
           Simulator.schedule(AirportEvent(0, this, AirportEvent.PLANE_TAKES_OFF, airEvent.plane))
@@ -79,13 +80,13 @@ case class Airport(id: Int,
 
       case AirportEvent.PLANE_LANDED =>
         inTheAir = inTheAir - 1
-        println(s"${Simulator.getCurrentTime}: Plane lands at ${this.icaoCode}")
+        if (config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane lands at ${this.icaoCode}")
         numArrived = numArrived + airEvent.plane.unloadPassengers
         Simulator.schedule(AirportEvent(requiredTimeOnGround, this, AirportEvent.PLANE_DEPARTS, airEvent.plane))
 
       case AirportEvent.PLANE_TAKES_OFF =>
         onTheGround = onTheGround - 1
-        println(s"${Simulator.getCurrentTime}: Plane takes off from ${this.icaoCode}")
+        if (config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane takes off from ${this.icaoCode}")
         var destination = this.airportList(this.randGen.nextInt(this.airportList.length))
         while (destination.id == this.id) {
           destination = this.airportList(this.randGen.nextInt(this.airportList.length))
@@ -114,6 +115,14 @@ case class Airport(id: Int,
         if (runwayQueue.length == 0) {
           runwayFree = true
         }
+    }
+  }
+
+  def logStats(): Unit = {
+    if (config.shortLogs) {
+      println(s"${Simulator.getCurrentTime} ${id} ${numArrived} ${numDeparted} ${timeGrounded} ${timeCircling}")
+    } else {
+      println(s"${Simulator.getCurrentTime}: Airport ${id} ${icaoCode}: ${numArrived} arrived, ${numDeparted} departed, ${timeGrounded} min grounded, ${timeCircling} min circling")
     }
   }
 }
