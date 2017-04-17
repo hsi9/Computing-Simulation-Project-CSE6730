@@ -61,11 +61,10 @@ case class Airport(id: Int,
       case AirportEvent.PLANE_ARRIVES =>
         inTheAir = inTheAir + 1
         if (Airport.config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane requesting to land at ${this.icaoCode}")
+        runwayQueue += ((Simulator.getCurrentTime, AirportEvent.PLANE_LANDED, airEvent.plane))
         if (runwayFree) {
-          Simulator.schedule(AirportEvent(runwayTimeToLand, this, AirportEvent.PLANE_LANDED, airEvent.plane))
-        } else {
-          runwayQueue += ((Simulator.getCurrentTime, AirportEvent.PLANE_LANDED, airEvent.plane))
           Simulator.schedule(AirportEvent(0, this, AirportEvent.RUNWAY_EVENT, null))
+          runwayFree = false
         }
         if (Airport.config.logTraceViewer) {
           Airport.traceEventList += TraceEvent(s"${icaoCode}: plane arrived",
@@ -78,12 +77,10 @@ case class Airport(id: Int,
       case AirportEvent.PLANE_DEPARTS =>
         onTheGround = onTheGround + 1
         if (Airport.config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane requesting to take off from ${this.icaoCode}")
-        numDeparted = numDeparted + airEvent.plane.loadPassengers
+        runwayQueue += ((Simulator.getCurrentTime, AirportEvent.PLANE_TAKES_OFF, airEvent.plane))
         if (runwayFree) {
-          Simulator.schedule(AirportEvent(0, this, AirportEvent.PLANE_TAKES_OFF, airEvent.plane))
-        } else {
-          runwayQueue += ((Simulator.getCurrentTime, AirportEvent.PLANE_TAKES_OFF, airEvent.plane))
           Simulator.schedule(AirportEvent(0, this, AirportEvent.RUNWAY_EVENT, null))
+          runwayFree = false
         }
         if (Airport.config.logTraceViewer) {
           Airport.traceEventList += TraceEvent(s"${icaoCode}: plane departed",
@@ -108,12 +105,13 @@ case class Airport(id: Int,
 
       case AirportEvent.PLANE_TAKES_OFF =>
         onTheGround = onTheGround - 1
-        if (Airport.config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane takes off from ${this.icaoCode}")
+        numDeparted = numDeparted + airEvent.plane.loadPassengers
         var destination = Airport.airportList(this.randGen.nextInt(Airport.airportList.length))
         while (destination.id == this.id) {
           destination = Airport.airportList(this.randGen.nextInt(Airport.airportList.length))
         }
-        Simulator.schedule(AirportEvent(distanceTo(destination), this, AirportEvent.PLANE_ARRIVES, airEvent.plane))
+        if (Airport.config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane takes off from ${this.icaoCode} to ${destination.icaoCode}")
+        Simulator.schedule(AirportEvent(distanceTo(destination), destination, AirportEvent.PLANE_ARRIVES, airEvent.plane))
         if (Airport.config.logTraceViewer) {
           Airport.traceEventList += TraceEvent(s"${icaoCode}: plane took off",
                                                List(s"airport", s"PLANE_"),
