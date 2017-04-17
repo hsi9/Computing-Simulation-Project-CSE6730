@@ -59,19 +59,22 @@ object AirportSim {
         MPI.Init(args)
 
         if (MPI.COMM_WORLD.getRank() == 0) {
-          println(s"Number of MPI processes: ${MPI.COMM_WORLD.getSize()}")
           // load yaml config
           val config = SimulatorConfig.fromFile(cliArgs.configFile)
-          println(s"\nParsed SimulatorConfig: ${config}")
+          if (config.logRealTimeEvents) println(s"\nParsed SimulatorConfig: ${config}")
           Simulator.setConfig(config)
+
+          if (config.logRealTimeEvents) println(s"Number of MPI processes: ${MPI.COMM_WORLD.getSize()}")
 
           // load airplanes from HDF5 file (unless options say not to)
           val airplanes_mapped =
             if (config.planeUsesHdf5Data) {
               val hdf5_airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
-              println(s"\nParsed ${hdf5_airplanes.length} Airplanes from HDF5 file:")
-              hdf5_airplanes.foreach { plane =>
-                println(plane)
+              if (config.logRealTimeEvents) {
+                println(s"\nParsed ${hdf5_airplanes.length} Airplanes from HDF5 file:")
+                hdf5_airplanes.foreach { plane =>
+                  println(plane)
+                }
               }
               // hdf5.Airplane to Airplane conversion
               hdf5_airplanes.map(Airplane(_))
