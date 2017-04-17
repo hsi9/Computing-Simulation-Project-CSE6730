@@ -65,32 +65,21 @@ object AirportSim {
           println(s"\nParsed SimulatorConfig: ${config}")
           Simulator.setConfig(config)
 
-          var airplanes : List[hdf5.Airplane] = List.empty
-          var airplanes_mapped : List[Airplane] = List.empty
-          // load airplanes from HDF5 file
-          if (config.planeUsesHdf5Data) {
-            airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
-            println(s"\nParsed Airplanes from HDF5 file:")
-            airplanes.foreach { plane =>
-              println(plane)
+          // load airplanes from HDF5 file (unless options say not to)
+          val airplanes_mapped =
+            if (config.planeUsesHdf5Data) {
+              val hdf5_airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
+              println(s"\nParsed ${hdf5_airplanes.length} Airplanes from HDF5 file:")
+              hdf5_airplanes.foreach { plane =>
+                println(plane)
+              }
+              // hdf5.Airplane to Airplane conversion
+              hdf5_airplanes.map(Airplane(_))
+            } else {
+              1.to(config.planeCount).toList.map { i =>
+                Airplane.defaultPlane(i)
+              }
             }
-            // hdf5.Airplane to Airplane conversion
-            airplanes_mapped = airplanes.map { plane =>
-              new Airplane(plane.id,
-                            plane.name,
-                            plane.manufacturer,
-                            plane.speed,
-                            plane.capacity)
-            }
-          } else {
-            var airplanes_mapped_buffer = new ArrayBuffer[Airplane]
-            for (i <- 1 to config.planeCount) {
-              airplanes_mapped_buffer += new Airplane(i, "787-8 Dreamliner", "Boeing", 17.35479, 242)
-              // http://www.boeing.com/commercial/787/by-design/#/all-model-performance-summary
-              // Speed is in KILOMETRES PER MINUTE. (Simulator runs on minutes)
-            }
-            airplanes_mapped = airplanes_mapped_buffer.toList
-          }
 
           // load airports from HDF5 file
           val hdf5_airports = hdf5.Airport.loadFromH5File(cliArgs.dataFile, "airports/table")
