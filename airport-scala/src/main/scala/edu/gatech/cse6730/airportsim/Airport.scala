@@ -1,5 +1,10 @@
 package edu.gatech.cse6730.airportsim
 
+import org.json4s._
+import org.json4s.native.JsonMethods._
+import org.json4s.JsonDSL.WithDouble._
+
+import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Queue
 import scala.util.Random
 
@@ -67,6 +72,13 @@ case class Airport(id: Int,
           runwayQueue += ((Simulator.getCurrentTime, AirportEvent.PLANE_LANDED, airEvent.plane))
           Simulator.schedule(AirportEvent(0, this, AirportEvent.RUNWAY_EVENT, null))
         }
+        if (Airport.config.logTraceViewer) {
+          Airport.traceEventList += new TraceEvent(s"${icaoCode}: plane arrived",
+                                           List(s"airport", s"PLANE_"),
+                                           "i",
+                                           Simulator.getCurrentTime,
+                                           id)
+        }
 
       case AirportEvent.PLANE_DEPARTS =>
         onTheGround = onTheGround + 1
@@ -78,12 +90,26 @@ case class Airport(id: Int,
           runwayQueue += ((Simulator.getCurrentTime, AirportEvent.PLANE_TAKES_OFF, airEvent.plane))
           Simulator.schedule(AirportEvent(0, this, AirportEvent.RUNWAY_EVENT, null))
         }
+        if (Airport.config.logTraceViewer) {
+          Airport.traceEventList += new TraceEvent(s"${icaoCode}: plane departed",
+                                           List(s"airport", s"PLANE_"),
+                                           "i",
+                                           Simulator.getCurrentTime,
+                                           id)
+        }
 
       case AirportEvent.PLANE_LANDED =>
         inTheAir = inTheAir - 1
         if (Airport.config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane lands at ${this.icaoCode}")
         numArrived = numArrived + airEvent.plane.unloadPassengers
         Simulator.schedule(AirportEvent(requiredTimeOnGround, this, AirportEvent.PLANE_DEPARTS, airEvent.plane))
+        if (Airport.config.logTraceViewer) {
+          Airport.traceEventList += new TraceEvent(s"${icaoCode}: plane landed",
+                                           List(s"airport", s"PLANE_"),
+                                           "i",
+                                           Simulator.getCurrentTime,
+                                           id)
+        }
 
       case AirportEvent.PLANE_TAKES_OFF =>
         onTheGround = onTheGround - 1
@@ -93,6 +119,13 @@ case class Airport(id: Int,
           destination = this.airportList(this.randGen.nextInt(this.airportList.length))
         }
         Simulator.schedule(AirportEvent(distanceTo(destination), this, AirportEvent.PLANE_ARRIVES, airEvent.plane))
+        if (Airport.config.logTraceViewer) {
+          Airport.traceEventList += new TraceEvent(s"${icaoCode}: plane took off",
+                                           List(s"airport", s"PLANE_"),
+                                           "i",
+                                           Simulator.getCurrentTime,
+                                           id)
+        }
 
       case AirportEvent.RUNWAY_EVENT =>
         if (runwayQueue.length >= 1) {
@@ -126,10 +159,25 @@ case class Airport(id: Int,
       println(s"${Simulator.getCurrentTime}: Airport ${id} ${icaoCode}: ${numArrived} arrived, ${numDeparted} departed, ${timeGrounded} min grounded, ${timeCircling} min circling")
     }
   }
+
+  def logTrace(): Unit = {
+    val json =
+      ("traceEvents" -> traceEventList.map { e =>
+        ("name" -> e.name) ~
+        ("cat" -> e.category.mkString(",") ) ~
+        ("ph" -> e.eventType) ~
+        ("ts" -> e.timestamp * 60000) ~ // times are in ms
+        ("pid" -> e.airportID)
+      }) ~
+      ("displayTimeUnit" -> "ms") // trace-viewer only supports ms or ns
+
+    println(pretty(render(json)))
+  }
 }
 
 object Airport{
   private var config: SimulatorConfig = SimulatorConfig.defaultConfig()
+  private val traceEventList = ArrayBuffer.empty[TraceEvent]
 
   def setConfig(newConfig: SimulatorConfig): Unit = { config = newConfig }
 }

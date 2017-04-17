@@ -151,6 +151,12 @@ object AirportSim {
               airport.logStats()
             }
           }
+
+          if (config.logTraceViewer) {
+            airports_mapped.foreach { airport =>
+              airport.logTrace()
+            }
+          }
         }
 
         // computePiInParallel()
