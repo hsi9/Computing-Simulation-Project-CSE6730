@@ -25,7 +25,7 @@ case class Airport(id: Int,
   private var numArrived = 0
   private var numDeparted = 0
 
-  private val randGen = new scala.util.Random(this.id + numArrived*numDeparted)
+  private val randGen = new scala.util.Random(this.id)
 
   private var runwayQueue = new Queue[(Double, Int, Airplane)]
   private var timeGrounded = 0.0
