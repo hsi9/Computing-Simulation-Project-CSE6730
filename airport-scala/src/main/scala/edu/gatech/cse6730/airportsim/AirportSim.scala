@@ -7,7 +7,7 @@ import net.jcazevedo.moultingyaml._
 import net.jcazevedo.moultingyaml.DefaultYamlProtocol._
 import scopt._
 
-import scala.collection.mutable.ArrayBuffer
+import scala.math._
 import scala.util.Random
 
 case class AirportSimCliArgs(configFile: String = "",
@@ -136,9 +136,8 @@ object AirportSim {
           Simulator.stopAt(config.runningTime)
 
           if (config.logStatistics) {
-            for (i <- 1 to (config.runningTime / config.logInterval) ) {
-              val logTime = config.logInterval * i
-              Simulator.stopAt(logTime)
+            for (i <- 1 to floor(config.runningTime / config.logInterval).toInt ) {
+              Simulator.stopAt(config.logInterval)
               Simulator.run()
               airports_mapped.foreach { airport =>
                 airport.logStats()
@@ -147,12 +146,6 @@ object AirportSim {
           }
 
           Simulator.run()
-
-          if (config.logStatistics) {
-            airports_mapped.foreach { airport =>
-              airport.logStats()
-            }
-          }
 
           if (config.logTraceViewer) {
             airports_mapped.foreach { airport =>
