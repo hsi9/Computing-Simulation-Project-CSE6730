@@ -93,13 +93,15 @@ object AirportSim {
           }
 
           // load airports from HDF5 file
-          val airports = hdf5.Airport.loadFromH5File(cliArgs.dataFile, "airports/table")
-          println(s"\nParsed Airports from HDF5 file:")
-          airports.foreach { airport =>
-            println(airport)
-          }
+          val hdf5_airports = hdf5.Airport.loadFromH5File(cliArgs.dataFile, "airports/table")
+            if (config.logRealTimeEvents) {
+              println(s"\nParsed ${hdf5_airports.length} Airports from HDF5 file:")
+              hdf5_airports.foreach { airport =>
+                println(airport)
+              }
+            }
           // hdf5.Airport to Airport conversion
-          val airports_mapped = airports.map { airport =>
+          val airports_mapped = hdf5_airports.map { airport =>
             new Airport(airport.id,
                         airport.name,
                         airport.city,

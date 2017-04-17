@@ -11,7 +11,8 @@ object RunningOption extends Enumeration {
   val NON_DISTRIBUTED, YAWNS, NULL_MESSAGE = Value
 }
 
-case class SimulatorConfig(planeCount: Int,
+case class SimulatorConfig(airportCount: Int,
+                           planeCount: Int,
                            planeDistribution: PlaneDistribution.Value,
                            planeUsesHdf5Data: Boolean,
                            logRealTimeEvents: Boolean,
@@ -33,7 +34,7 @@ object SimulatorConfigProtocol extends DefaultYamlProtocol {
     def read(value: YamlValue) = RunningOption.withName(value.asInstanceOf[YamlString].value)
   }
 
-  implicit val simulatorConfigFormat = yamlFormat10(SimulatorConfig.apply)
+  implicit val simulatorConfigFormat = yamlFormat11(SimulatorConfig.apply)
 }
 
 object SimulatorConfig {
@@ -43,7 +44,8 @@ object SimulatorConfig {
   }
 
   def defaultConfig(): SimulatorConfig = {
-    new SimulatorConfig(500,
+    new SimulatorConfig(50,
+                        500,
                         PlaneDistribution.ONE_AIRPORT,
                         false,
                         false,
