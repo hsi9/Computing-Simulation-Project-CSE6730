@@ -27,10 +27,9 @@ case class Airport(id: Int,
 
   private val randGen = new scala.util.Random(this.id)
 
-  private var runwayQueue = new Queue[(Double, Int, Airplane)]
+  private val runwayQueue = new Queue[(Double, Int, Airplane)]
   private var timeGrounded = 0.0
   private var timeCircling = 0.0
-  private var airportList : List[Airport] = List.empty
 
   private def deg2rad(deg: Double): Double = {
     deg * Math.PI / 180.0
@@ -38,10 +37,6 @@ case class Airport(id: Int,
 
   private def rad2deg(rad: Double): Double = {
     rad * 180.0 / Math.PI
-  }
-
-  def setAirportList(newList: List[Airport]) {
-    airportList = newList
   }
 
   def distanceTo(other: Airport): Double = {
@@ -73,11 +68,11 @@ case class Airport(id: Int,
           Simulator.schedule(AirportEvent(0, this, AirportEvent.RUNWAY_EVENT, null))
         }
         if (Airport.config.logTraceViewer) {
-          Airport.traceEventList += new TraceEvent(s"${icaoCode}: plane arrived",
-                                           List(s"airport", s"PLANE_"),
-                                           "i",
-                                           Simulator.getCurrentTime,
-                                           id)
+          Airport.traceEventList += TraceEvent(s"${icaoCode}: plane arrived",
+                                               List(s"airport", s"PLANE_"),
+                                               "i",
+                                               Simulator.getCurrentTime,
+                                               id)
         }
 
       case AirportEvent.PLANE_DEPARTS =>
@@ -91,11 +86,11 @@ case class Airport(id: Int,
           Simulator.schedule(AirportEvent(0, this, AirportEvent.RUNWAY_EVENT, null))
         }
         if (Airport.config.logTraceViewer) {
-          Airport.traceEventList += new TraceEvent(s"${icaoCode}: plane departed",
-                                           List(s"airport", s"PLANE_"),
-                                           "i",
-                                           Simulator.getCurrentTime,
-                                           id)
+          Airport.traceEventList += TraceEvent(s"${icaoCode}: plane departed",
+                                               List(s"airport", s"PLANE_"),
+                                               "i",
+                                               Simulator.getCurrentTime,
+                                               id)
         }
 
       case AirportEvent.PLANE_LANDED =>
@@ -104,49 +99,50 @@ case class Airport(id: Int,
         numArrived = numArrived + airEvent.plane.unloadPassengers
         Simulator.schedule(AirportEvent(requiredTimeOnGround, this, AirportEvent.PLANE_DEPARTS, airEvent.plane))
         if (Airport.config.logTraceViewer) {
-          Airport.traceEventList += new TraceEvent(s"${icaoCode}: plane landed",
-                                           List(s"airport", s"PLANE_"),
-                                           "i",
-                                           Simulator.getCurrentTime,
-                                           id)
+          Airport.traceEventList += TraceEvent(s"${icaoCode}: plane landed",
+                                               List(s"airport", s"PLANE_"),
+                                               "i",
+                                               Simulator.getCurrentTime,
+                                               id)
         }
 
       case AirportEvent.PLANE_TAKES_OFF =>
         onTheGround = onTheGround - 1
         if (Airport.config.logRealTimeEvents) println(s"${Simulator.getCurrentTime}: Plane takes off from ${this.icaoCode}")
-        var destination = this.airportList(this.randGen.nextInt(this.airportList.length))
+        var destination = Airport.airportList(this.randGen.nextInt(Airport.airportList.length))
         while (destination.id == this.id) {
-          destination = this.airportList(this.randGen.nextInt(this.airportList.length))
+          destination = Airport.airportList(this.randGen.nextInt(Airport.airportList.length))
         }
         Simulator.schedule(AirportEvent(distanceTo(destination), this, AirportEvent.PLANE_ARRIVES, airEvent.plane))
         if (Airport.config.logTraceViewer) {
-          Airport.traceEventList += new TraceEvent(s"${icaoCode}: plane took off",
-                                           List(s"airport", s"PLANE_"),
-                                           "i",
-                                           Simulator.getCurrentTime,
-                                           id)
+          Airport.traceEventList += TraceEvent(s"${icaoCode}: plane took off",
+                                               List(s"airport", s"PLANE_"),
+                                               "i",
+                                               Simulator.getCurrentTime,
+                                               id)
         }
 
       case AirportEvent.RUNWAY_EVENT =>
-        if (runwayQueue.length >= 1) {
+        if (!runwayQueue.isEmpty) {
           val (queuedTime, queuedEventType, queuedPlane) = runwayQueue.dequeue
-          var queuedEventCompletionTime = 0.0
+          val queuedEventCompletionTime = queuedEventType match {
+            case AirportEvent.PLANE_LANDED => runwayTimeToLand
+            case AirportEvent.PLANE_TAKES_OFF => 0.0
+          }
           queuedEventType match {
             case AirportEvent.PLANE_LANDED =>
-              queuedEventCompletionTime = runwayTimeToLand
               Simulator.schedule(AirportEvent(queuedEventCompletionTime, this, AirportEvent.PLANE_LANDED, queuedPlane))
               timeCircling = timeCircling + (Simulator.getCurrentTime - queuedTime)
 
             case AirportEvent.PLANE_TAKES_OFF =>
-              queuedEventCompletionTime = 0.0
               Simulator.schedule(AirportEvent(queuedEventCompletionTime, this, AirportEvent.PLANE_TAKES_OFF, queuedPlane))
               timeGrounded = timeGrounded + (Simulator.getCurrentTime - queuedTime)
           }
-          if (runwayQueue.length >= 1) {
+          if (!runwayQueue.isEmpty) {
             Simulator.schedule(AirportEvent(queuedEventCompletionTime, this, AirportEvent.RUNWAY_EVENT, null))
           }
         }
-        if (runwayQueue.length == 0) {
+        if (runwayQueue.isEmpty) {
           runwayFree = true
         }
     }
@@ -175,9 +171,28 @@ case class Airport(id: Int,
   }
 }
 
-object Airport{
-  private var config: SimulatorConfig = SimulatorConfig.defaultConfig()
+object Airport {
+  private var config = SimulatorConfig.defaultConfig()
+  private var airportList = List.empty[Airport]
   private val traceEventList = ArrayBuffer.empty[TraceEvent]
 
-  def setConfig(newConfig: SimulatorConfig): Unit = { config = newConfig }
+  def setConfig(newConfig: SimulatorConfig): Unit = {
+    config = newConfig
+  }
+
+  def setAirportList(newList: List[Airport]) = {
+    airportList = newList
+  }
+
+  def apply(hdf5_airport: hdf5.Airport): Airport = {
+    new Airport(hdf5_airport.id,
+                hdf5_airport.name,
+                hdf5_airport.city,
+                hdf5_airport.country,
+                hdf5_airport.iataCode,
+                hdf5_airport.icaoCode,
+                10,
+                10,
+                (hdf5_airport.latitude, hdf5_airport.longitude))
+  }
 }

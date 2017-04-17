@@ -90,21 +90,9 @@ object AirportSim {
               }
             }
           // hdf5.Airport to Airport conversion
-          val airports_mapped = hdf5_airports.map { airport =>
-            new Airport(airport.id,
-                        airport.name,
-                        airport.city,
-                        airport.country,
-                        airport.iataCode,
-                        airport.icaoCode,
-                        10,
-                        10,
-                        (airport.latitude, airport.longitude))
-          }
-          airports_mapped.foreach { airport =>
-            airport.setAirportList(airports_mapped)
-          }
+          val airports_mapped = hdf5_airports.take(config.airportCount).map(Airport(_))
           Airport.setConfig(config)
+          Airport.setAirportList(airports_mapped)
 
           val randGen = new scala.util.Random
           config.planeDistribution match {
