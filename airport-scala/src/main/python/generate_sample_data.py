@@ -9,8 +9,8 @@ def generate_airplanes(h5file, path, num_airplanes, compression=None):
                 i,
                 ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4)),
                 ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3)),
-                random.uniform(0, 1000),
-                random.uniform(0, 1000)
+                random.uniform(1, 1000),
+                random.uniform(1, 1000)
             ))
         return data
 
@@ -41,8 +41,8 @@ def generate_airports(h5file, path, num_airports, compression=None):
                 ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5)),
                 ''.join(random.choice(string.ascii_uppercase) for _ in range(3)),
                 ''.join(random.choice(string.ascii_uppercase) for _ in range(3)),
-                random.uniform(0, 1000),
-                random.uniform(0, 1000),
+                random.uniform(-180, 180),
+                random.uniform(-180, 180),
                 random.uniform(0, 1000)
             ))
         return data
@@ -88,8 +88,8 @@ def generate_airports(h5file, path, num_airports, compression=None):
 
 def create_h5file():
     h5file = h5py.File("airportsim.h5", "w")
-    generate_airplanes(h5file, "airplanes", 43, None)
-    generate_airports(h5file, "airports", 13, None)
+    generate_airplanes(h5file, "airplanes", 5000, None)
+    generate_airports(h5file, "airports", 7184, None)
 
 
 def main():

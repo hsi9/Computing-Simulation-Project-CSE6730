@@ -1,10 +1,13 @@
 ---
+airportCount: 50                  # number of airports to use. maximum of 7184.
 planeCount: 500                   # number of planes to generate
-planeDistribution: ONE_AIRPORT    # how to distribute planes initially. UNIFORM, ONE_AIRPORT
-planeUsesHdf5Data: false          # when false, all planes must fall back to default type
+planeDistribution: UNIFORM        # how to distribute planes initially. UNIFORM, ONE_AIRPORT
+planeUsesHdf5Data: true           # when false, all planes must fall back to default type
+logRealTimeEvents: true           # log events as they happen
 logStatistics: true               # log simulation statistics at regular intervals
 logInterval: 50                   # interval for log_statistics. irrelevant when log_statistics: false
+shortLogs: false                  # shorten statistics logs into space-separated numbers only (for plotting)
 logTraceViewer: false             # log output for trace-viewer at simulator completion
 runningOption: NON_DISTRIBUTED    # required simulator option. NON_DISTRIBUTED, YAWNS, NULL_MESSAGE
-runningTime: 1000                 # length of simulation runtime
+runningTime: 10000                 # length of simulation runtime
 ...

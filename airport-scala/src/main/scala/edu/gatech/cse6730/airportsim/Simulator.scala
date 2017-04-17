@@ -6,6 +6,7 @@ object Simulator extends EventHandler {
   private var currentTime: Double = 0
   private var isRunning: Boolean = false
   private val eventList: TreeSet[Event] = new TreeSet[Event]()
+  private var config: SimulatorConfig = SimulatorConfig.defaultConfig()
 
   def run(): Unit = {
     isRunning = true
@@ -20,7 +21,7 @@ object Simulator extends EventHandler {
     event.eventType match {
       case SimulatorEvent.STOP_EVENT =>
         isRunning = false;
-        println(s"Simulator stopping at time: ${event.time}")
+        if (config.logRealTimeEvents) println(s"Simulator stopping at time: ${event.time}")
       case _ =>
         println("Invalid event type")
     }
@@ -41,5 +42,9 @@ object Simulator extends EventHandler {
 
   def getCurrentTime: Double = {
     currentTime
+  }
+
+  def setConfig(newConfig: SimulatorConfig): Unit = {
+    config = newConfig
   }
 }

@@ -648,12 +648,12 @@ id,name,city,country,iata,icao,lat,lon,alt
 655,Orland_Airport,Orland,Norway,OLA,ENOL,63.69889832,9.604000092,28
 656,Roros_Airport,Roros,Norway,RRS,ENRO,62.57839966,11.34230042,2054
 657,Moss-Rygge_Airport,Rygge,Norway,RYG,ENRY,59.378817,10.785439,174
-658,Svalbard_Airport,_Longyear,Svalbard,Norway,LYR,ENSB,78.24610138,15.46560001,88
+658,Svalbard_Airport_Longyear,Svalbard,Norway,LYR,ENSB,78.24610138,15.46560001,88
 659,Skien_Airport,Skien,Norway,SKE,ENSN,59.18500137,9.566940308,463
 660,Stord_Airport,Stord,Norway,SRP,ENSO,59.79190063,5.340849876,160
 662,Sandnessjoen_Airport_(Stokka),Sandnessjoen,Norway,SSJ,ENST,65.95680237,12.46889973,56
 663,Tromso_Airport,Tromso,Norway,TOS,ENTC,69.6832962,18.91889954,31
-664,Sandefjord_Airport,_Torp,Sandefjord,Norway,TRF,ENTO,59.18669891,10.25860024,286
+664,Sandefjord_Airport_Torp,Sandefjord,Norway,TRF,ENTO,59.18669891,10.25860024,286
 665,Trondheim_Airport_Vaernes,Trondheim,Norway,TRD,ENVA,63.4578018,10.9239998,56
 666,Stavanger_Airport_Sola,Stavanger,Norway,SVG,ENZV,58.87670135,5.63778019,29
 667,Babice_Airport,Warsaw,Poland,\N,EPBC,52.26850128,20.9109993,352

@@ -7,6 +7,9 @@ import net.jcazevedo.moultingyaml._
 import net.jcazevedo.moultingyaml.DefaultYamlProtocol._
 import scopt._
 
+import scala.math._
+import scala.util.Random
+
 case class AirportSimCliArgs(configFile: String = "",
                              dataFile: String = "")
 
@@ -56,32 +59,82 @@ object AirportSim {
         MPI.Init(args)
 
         if (MPI.COMM_WORLD.getRank() == 0) {
-          println(s"Number of MPI processes: ${MPI.COMM_WORLD.getSize()}")
+          // load yaml config
+          val config = SimulatorConfig.fromFile(cliArgs.configFile)
+          if (config.logRealTimeEvents) println(s"\nParsed SimulatorConfig: ${config}")
+          Simulator.setConfig(config)
 
-          val lax = Airport("LAX", 10, 10, (33.9416, 118.4085))
-          val landingEvent = AirportEvent(5, lax, AirportEvent.PLANE_ARRIVES);
-          Simulator.schedule(landingEvent)
-          Simulator.stopAt(50)
+          if (config.logRealTimeEvents) println(s"Number of MPI processes: ${MPI.COMM_WORLD.getSize()}")
+
+          // load airplanes from HDF5 file (unless options say not to)
+          val airplanes_mapped =
+            if (config.planeUsesHdf5Data) {
+              val hdf5_airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
+              if (config.logRealTimeEvents) {
+                println(s"\nParsed ${hdf5_airplanes.length} Airplanes from HDF5 file:")
+                hdf5_airplanes.foreach { plane =>
+                  println(plane)
+                }
+              }
+              // hdf5.Airplane to Airplane conversion
+              hdf5_airplanes.map(Airplane(_))
+            } else {
+              1.to(config.planeCount).toList.map { i =>
+                Airplane.defaultPlane(i)
+              }
+            }
+
+          // load airports from HDF5 file
+          val hdf5_airports = hdf5.Airport.loadFromH5File(cliArgs.dataFile, "airports/table")
+            if (config.logRealTimeEvents) {
+              println(s"\nParsed ${hdf5_airports.length} Airports from HDF5 file:")
+              hdf5_airports.foreach { airport =>
+                println(airport)
+              }
+            }
+          // hdf5.Airport to Airport conversion
+          val airports_mapped = hdf5_airports.take(config.airportCount).map(Airport(_))
+          Airport.setConfig(config)
+          Airport.setAirportList(airports_mapped)
+
+          val randGen = new scala.util.Random
+          config.planeDistribution match {
+            case PlaneDistribution.ONE_AIRPORT =>
+              for (i <- 0 to config.planeCount) {
+                val airplane = airplanes_mapped(randGen.nextInt(airplanes_mapped.length))
+                val airport = airports_mapped(0)
+                Simulator.schedule(AirportEvent(randGen.nextInt(config.runningTime/100), airport, AirportEvent.PLANE_ARRIVES, airplane))
+              }
+            case PlaneDistribution.UNIFORM =>
+              for(i <- 0 to config.planeCount) {
+                val airplane = airplanes_mapped(randGen.nextInt(airplanes_mapped.length))
+                val airport = airports_mapped(randGen.nextInt(airports_mapped.length))
+                Simulator.schedule(AirportEvent(randGen.nextInt(config.runningTime/100), airport, AirportEvent.PLANE_ARRIVES, airplane))
+              }
+          }
+
+          Simulator.stopAt(config.runningTime)
+
+          if (config.logStatistics) {
+            for (i <- 1 to floor(config.runningTime / config.logInterval).toInt ) {
+              Simulator.stopAt(config.logInterval)
+              Simulator.run()
+              airports_mapped.foreach { airport =>
+                airport.logStats()
+              }
+            }
+          }
+
           Simulator.run()
 
-          // test yaml config
-          val config = SimulatorConfig.fromFile(cliArgs.configFile)
-          println(s"\nParsed SimulatorConfig: ${config}")
-
-          // test HDF5
-          val airplanes = hdf5.Airplane.loadFromH5File(cliArgs.dataFile, "airplanes/table")
-          println(s"\nParsed Airplanes from HDF5 file:")
-          airplanes.foreach { plane =>
-            println(plane)
-          }
-          val airports = hdf5.Airport.loadFromH5File(cliArgs.dataFile, "airports/table")
-          println(s"\nParsed Airports from HDF5 file:")
-          airports.foreach { airport =>
-            println(airport)
+          if (config.logTraceViewer) {
+            airports_mapped.foreach { airport =>
+              airport.logTrace()
+            }
           }
         }
 
-        computePiInParallel()
+        // computePiInParallel()
         MPI.Finalize()
 
       case None =>
