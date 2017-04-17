@@ -103,13 +103,13 @@ object AirportSim {
               for (i <- 0 to config.planeCount) {
                 val airplane = airplanes_mapped(randGen.nextInt(airplanes_mapped.length))
                 val airport = airports_mapped(0)
-                Simulator.schedule(AirportEvent(randGen.nextInt(5), airport, AirportEvent.PLANE_ARRIVES, airplane))
+                Simulator.schedule(AirportEvent(randGen.nextInt(config.runningTime/100), airport, AirportEvent.PLANE_ARRIVES, airplane))
               }
             case PlaneDistribution.UNIFORM =>
               for(i <- 0 to config.planeCount) {
                 val airplane = airplanes_mapped(randGen.nextInt(airplanes_mapped.length))
                 val airport = airports_mapped(randGen.nextInt(airports_mapped.length))
-                Simulator.schedule(AirportEvent(randGen.nextInt(5), airport, AirportEvent.PLANE_ARRIVES, airplane))
+                Simulator.schedule(AirportEvent(randGen.nextInt(config.runningTime/100), airport, AirportEvent.PLANE_ARRIVES, airplane))
               }
           }
 
