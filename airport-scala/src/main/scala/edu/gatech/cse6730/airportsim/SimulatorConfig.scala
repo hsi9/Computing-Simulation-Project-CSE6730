@@ -20,6 +20,7 @@ case class SimulatorConfig(airportCount: Int,
                            logInterval: Int,
                            shortLogs: Boolean,
                            logTraceViewer: Boolean,
+                           stdoutTrace: Boolean,
                            runningOption: RunningOption.Value,
                            runningTime: Int)
 
@@ -34,7 +35,7 @@ object SimulatorConfigProtocol extends DefaultYamlProtocol {
     def read(value: YamlValue) = RunningOption.withName(value.asInstanceOf[YamlString].value)
   }
 
-  implicit val simulatorConfigFormat = yamlFormat11(SimulatorConfig.apply)
+  implicit val simulatorConfigFormat = yamlFormat12(SimulatorConfig.apply)
 }
 
 object SimulatorConfig {
@@ -51,6 +52,7 @@ object SimulatorConfig {
                         false,
                         false,
                         50,
+                        false,
                         false,
                         false,
                         RunningOption.NON_DISTRIBUTED,

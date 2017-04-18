@@ -4,6 +4,8 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL.WithDouble._
 
+import java.io._
+
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Queue
 import scala.util.Random
@@ -68,7 +70,7 @@ case class Airport(id: Int,
         }
         if (Airport.config.logTraceViewer) {
           Airport.traceEventList += TraceEvent(s"${icaoCode}: plane arrived",
-                                               List(s"airport", s"PLANE_"),
+                                               List(s"airport", s"PLANE_ARRIVES"),
                                                "i",
                                                Simulator.getCurrentTime,
                                                id)
@@ -84,7 +86,7 @@ case class Airport(id: Int,
         }
         if (Airport.config.logTraceViewer) {
           Airport.traceEventList += TraceEvent(s"${icaoCode}: plane departed",
-                                               List(s"airport", s"PLANE_"),
+                                               List(s"airport", s"PLANE_DEPARTS"),
                                                "i",
                                                Simulator.getCurrentTime,
                                                id)
@@ -97,7 +99,7 @@ case class Airport(id: Int,
         Simulator.schedule(AirportEvent(requiredTimeOnGround, this, AirportEvent.PLANE_DEPARTS, airEvent.plane))
         if (Airport.config.logTraceViewer) {
           Airport.traceEventList += TraceEvent(s"${icaoCode}: plane landed",
-                                               List(s"airport", s"PLANE_"),
+                                               List(s"airport", s"PLANE_LANDED"),
                                                "i",
                                                Simulator.getCurrentTime,
                                                id)
@@ -114,7 +116,7 @@ case class Airport(id: Int,
         Simulator.schedule(AirportEvent(distanceTo(destination), destination, AirportEvent.PLANE_ARRIVES, airEvent.plane))
         if (Airport.config.logTraceViewer) {
           Airport.traceEventList += TraceEvent(s"${icaoCode}: plane took off",
-                                               List(s"airport", s"PLANE_"),
+                                               List(s"airport", s"PLANE_TAKES_OFF"),
                                                "i",
                                                Simulator.getCurrentTime,
                                                id)
@@ -137,7 +139,7 @@ case class Airport(id: Int,
               timeGrounded = timeGrounded + (Simulator.getCurrentTime - queuedTime)
           }
           if (!runwayQueue.isEmpty) {
-            Simulator.schedule(AirportEvent(queuedEventCompletionTime, this, AirportEvent.RUNWAY_EVENT, null))
+            Simulator.schedule(AirportEvent(this.runwayTimeToLand, this, AirportEvent.RUNWAY_EVENT, null))
           }
         }
         if (runwayQueue.isEmpty) {
@@ -154,19 +156,6 @@ case class Airport(id: Int,
     }
   }
 
-  def logTrace(): Unit = {
-    val json =
-      ("traceEvents" -> traceEventList.map { e =>
-        ("name" -> e.name) ~
-        ("cat" -> e.category.mkString(",") ) ~
-        ("ph" -> e.eventType) ~
-        ("ts" -> e.timestamp * 60000) ~ // times are in ms
-        ("pid" -> e.airportID)
-      }) ~
-      ("displayTimeUnit" -> "ms") // trace-viewer only supports ms or ns
-
-    println(pretty(render(json)))
-  }
 }
 
 object Airport {
@@ -192,5 +181,24 @@ object Airport {
                 10,
                 10,
                 (hdf5_airport.latitude, hdf5_airport.longitude))
+  }
+
+  def logTrace(): Unit = {
+    val json =
+      traceEventList.map { e =>
+        ("name" -> e.name) ~
+        ("cat" -> e.category.mkString(",") ) ~
+        ("ph" -> e.eventType) ~
+        ("ts" -> e.timestamp * 60 * 1000000) ~ // times are in min but timestamps are in ns
+        ("pid" -> 0) ~
+        ("tid" -> e.airportID)
+      }
+    if (config.stdoutTrace) {
+      println(pretty(render(json)))
+    } else {
+      val airportTraceWriter = new PrintWriter(new File(s"http${File.separator}airport_trace.json"))
+      airportTraceWriter.println(pretty(render(json)))
+      airportTraceWriter.close
+    }
   }
 }
