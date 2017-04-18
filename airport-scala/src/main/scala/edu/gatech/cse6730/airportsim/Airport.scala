@@ -4,6 +4,8 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL.WithDouble._
 
+import java.io._
+
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Queue
 import scala.util.Random
@@ -191,7 +193,12 @@ object Airport {
         ("pid" -> 0) ~
         ("tid" -> e.airportID)
       }
-    println(pretty(render(json)))
+    if (config.stdoutTrace) {
+      println(pretty(render(json)))
+    } else {
+      val airportTraceWriter = new PrintWriter(new File(s"http${File.separator}airport_trace.json"))
+      airportTraceWriter.println(pretty(render(json)))
+      airportTraceWriter.close
     }
   }
 }

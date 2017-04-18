@@ -6,8 +6,9 @@ planeUsesHdf5Data: true           # when false, all planes must fall back to def
 logRealTimeEvents: true           # log events as they happen
 logStatistics: true               # log simulation statistics at regular intervals
 logInterval: 50                   # interval for log_statistics. irrelevant when log_statistics: false
-shortLogs: false                  # shorten statistics logs into space-separated numbers only (for plotting)
-logTraceViewer: false             # log output for trace-viewer at simulator completion
+shortLogs: true                   # shorten statistics logs into space-separated numbers only (for plotting)
+logTraceViewer: true              # log output for trace-viewer at simulator completion
+stdoutTrace: false                # log output for trace-viewer in stdout instead of airport_trace.json
 runningOption: NON_DISTRIBUTED    # required simulator option. NON_DISTRIBUTED, YAWNS, NULL_MESSAGE
-runningTime: 10000                 # length of simulation runtime
+runningTime: 10000                # length of simulation runtime
 ...
