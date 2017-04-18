@@ -1,0 +1,13 @@
+config:
+  integrator: ZHANG
+  constraint: SHAKE
+  num_steps: 10
+  time_step: 10
+  electrostatic: ZERO-DIPOLE
+  thermostat: HOOVER-EVANS
+  temperature: 1
+  heating_steps: 3
+  distance_restraint: ~
+mpi:
+  # grid dimensions; the number of processors used in mpirun should equal the product
+  dimensions: [ 2, 1, 2 ]
