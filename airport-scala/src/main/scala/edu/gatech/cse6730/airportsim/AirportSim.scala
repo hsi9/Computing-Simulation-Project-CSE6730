@@ -128,9 +128,7 @@ object AirportSim {
           Simulator.run()
 
           if (config.logTraceViewer) {
-            airports_mapped.foreach { airport =>
-              airport.logTrace()
-            }
+            Airport.logTrace()
           }
         }
 
