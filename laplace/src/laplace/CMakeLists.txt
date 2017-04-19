@@ -6,6 +6,7 @@ add_subdirectory(utils)
 add_subdirectory(config)
 add_subdirectory(math)
 add_subdirectory(mpi)
+add_subdirectory(core)
 
 add_library(laplace ${LIBLAPLACE_SOURCES})
 

@@ -4,10 +4,11 @@ namespace config = laplace::config;
 using MPIConfig = laplace::config::MPIConfig;
 
 std::ostream& config::operator<<(std::ostream &os, const MPIConfig &c) {
-  return os << "MPIConfig(["
-            << c.dimensions[0] << ','
-            << c.dimensions[1] << ','
-            << c.dimensions[2] << "])";
+  YAML::Node node;
+  node["MPIConfig"] = c;
+  YAML::Emitter out;
+  out << node;
+  return os << out.c_str();
 }
 
 bool MPIConfig::operator==(MPIConfig other) const {

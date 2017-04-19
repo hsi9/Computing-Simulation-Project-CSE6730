@@ -3,12 +3,16 @@
 namespace config = laplace::config;
 using TCouplingConfig = laplace::config::TCouplingConfig;
 
+constexpr auto _THERMOSTAT = "thermostat";
+constexpr auto _COUPLING_FREQ = "coupling-freq";
+constexpr auto _NH_CHAIN_LENGTH = "nh-chain-length";
+
 std::ostream& config::operator<<(std::ostream &os, const TCouplingConfig &c) {
-  return os << "TCouplingConfig {"
-            << "\n  thermostat: " << enumToString(c.thermostat)
-            << "\n  coupling_freq: " << c.coupling_freq
-            << "\n  nh_chain_length: " << c.nh_chain_length
-            << "\n}";
+  YAML::Node node;
+  node["TCouplingConfig"] = c;
+  YAML::Emitter out;
+  out << node;
+  return os << out.c_str();
 }
 
 bool TCouplingConfig::operator==(TCouplingConfig other) const {
@@ -19,9 +23,9 @@ bool TCouplingConfig::operator==(TCouplingConfig other) const {
 
 YAML::Node YAML::convert<TCouplingConfig>::encode(const TCouplingConfig &c) {
   Node node;
-  node["thermostat"] = enumToString(c.thermostat);
-  node["coupling_freq"] = c.coupling_freq;
-  node["nh_chain_length"] = c.nh_chain_length;
+  node[_THERMOSTAT] = enumToString(c.thermostat);
+  node[_COUPLING_FREQ] = c.coupling_freq;
+  node[_NH_CHAIN_LENGTH] = c.nh_chain_length;
   return node;
 }
 
@@ -30,7 +34,7 @@ bool YAML::convert<TCouplingConfig>::decode(const Node &node, TCouplingConfig &c
     return false;
   }
 
-  auto thermostat = node["thermostat"];
+  auto thermostat = node[_THERMOSTAT];
   if (thermostat.IsScalar()) {
     auto s = thermostat.as<std::string>();
     if (s == "SCALING") c.thermostat = config::ThermostatType::SCALING;
@@ -40,14 +44,14 @@ bool YAML::convert<TCouplingConfig>::decode(const Node &node, TCouplingConfig &c
     return false;
   }
 
-  auto coupling_freq = node["coupling_freq"];
+  auto coupling_freq = node[_COUPLING_FREQ];
   if (coupling_freq.IsScalar()) {
     c.coupling_freq = coupling_freq.as<int>();
   } else {
     return false;
   }
 
-  auto nh_chain_length = node["nh_chain_length"];
+  auto nh_chain_length = node[_NH_CHAIN_LENGTH];
   if (nh_chain_length.IsScalar()) {
     c.nh_chain_length = nh_chain_length.as<int>();
   } else {

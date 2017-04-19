@@ -2,6 +2,8 @@
 #define LAP_MATH_VECTYPES_H
 
 #include "laplace/laplacepre.h"
+#include <vector>
+#include <array>
 
 namespace laplace {
   using RVec = std::array<real, DIMS>;

@@ -13,8 +13,8 @@ TEST(TCouplingConfigTest, load_config) {
       R"(
         |tcoupling:
         |  thermostat: SCALING
-        |  coupling_freq: 12
-        |  nh_chain_length: 42
+        |  coupling-freq: 12
+        |  nh-chain-length: 42
         |)"
     )
   );
