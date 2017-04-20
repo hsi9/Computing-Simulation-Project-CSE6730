@@ -1,4 +1,5 @@
 #include "laplace/config/mpi_config.h"
+#include "laplace/config/simulation_config.h"
 #include "laplace/math/vec_types.h"
 #include "laplace/mpi/torus_3d_comm.h"
 #include "laplace/utils/openmp.h"
@@ -36,6 +37,14 @@ int main(int argc, char **argv) {
                                          LIB_VERSION,
                                          LIB_GIT_SHA));
 
+  try {
+    auto config = config::SimulationConfig::load_from_file(args["--config"].asString());
+    cout << config << endl;
+
+  } catch (const std::exception& e) {
+    cout << e.what() << endl;
+  }
+/*
   MPI_Init(&argc, &argv);
 
   if (mpi::mpi_rank(MPI_COMM_WORLD) == 0) {
@@ -73,5 +82,7 @@ int main(int argc, char **argv) {
   fmt::print("x {}\n", x[2]);
 
   MPI_Finalize();
+*/
+
   return 0;
 }
