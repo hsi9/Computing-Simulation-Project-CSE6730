@@ -11,6 +11,9 @@ namespace laplace {
     std::vector<Angle> angles;
     std::vector<Torsion> dihedrals;
     std::vector<Torsion> impropers;
+    std::vector<NonBonded14> nonbonded14s;
+
+    static MmSystem load_from_file(const std::string &filepath);
   };
 }
 

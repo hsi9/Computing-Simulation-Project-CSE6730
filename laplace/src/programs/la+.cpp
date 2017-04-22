@@ -3,6 +3,9 @@
 #include "laplace/math/vec_types.h"
 #include "laplace/mpi/torus_3d_comm.h"
 #include "laplace/utils/openmp.h"
+#include "laplace/hdf5/h5_type.h"
+#include "laplace/hdf5/h5_read.h"
+#include "laplace/core/mm_system.h"
 
 #include <fmt/format.h>
 #include <yaml-cpp/yaml.h>
@@ -18,7 +21,7 @@ R"(
 la+
 
   Usage:
-    la+ mdrun --config <config_file> [options]
+    la+ --config <config_file> [options]
     la+ (-h | --help)
     la+ --version
 
@@ -26,6 +29,7 @@ la+
     -h --help               Show this screen.
     -v --version            Show version.
     --config <config_file>  MD run configuration (YAML).
+    --data <data_file>      MD run system input data (HDF5).
     --verbose               Print more logs.
 )";
 
@@ -38,6 +42,7 @@ int main(int argc, char **argv) {
                                          LIB_GIT_SHA));
 
   try {
+    auto mmsystem = laplace::MmSystem::load_from_file(args["--data"].asString());
     auto config = config::SimulationConfig::load_from_file(args["--config"].asString());
     cout << config << endl;
 
