@@ -3,6 +3,10 @@
 #include "laplace/math/vec_types.h"
 #include "laplace/mpi/torus_3d_comm.h"
 #include "laplace/utils/openmp.h"
+#include "laplace/hdf5/h5_type.h"
+#include "laplace/hdf5/h5_read.h"
+#include "laplace/hdf5/h5_util.h"
+#include "laplace/core/mm_system.h"
 
 #include <fmt/format.h>
 #include <yaml-cpp/yaml.h>
@@ -18,7 +22,7 @@ R"(
 la+
 
   Usage:
-    la+ mdrun --config <config_file> [options]
+    la+ --config <config_file> [options]
     la+ (-h | --help)
     la+ --version
 
@@ -26,8 +30,10 @@ la+
     -h --help               Show this screen.
     -v --version            Show version.
     --config <config_file>  MD run configuration (YAML).
+    --data <data_file>      MD run system input data (HDF5).
     --verbose               Print more logs.
 )";
+
 
 int main(int argc, char **argv) {
   auto args = docopt::docopt(USAGE_STRING,
@@ -41,9 +47,32 @@ int main(int argc, char **argv) {
     auto config = config::SimulationConfig::load_from_file(args["--config"].asString());
     cout << config << endl;
 
+    H5::H5File h5File(args["--data"].asString(), H5F_ACC_RDONLY);
+    auto mmsystem = laplace::MmSystem::load_from_file(h5File);
+    mmsystem.print_info();
+
+/*
+    auto r0s = laplace::hdf5::load_struct_array_column<double>(h5File, "topology/bonds", "r0", H5::PredType::NATIVE_DOUBLE);
+    auto ds = laplace::hdf5::load_2d_array_n_columns<double, 4>(h5File, "trajectory/0000/rvf", H5::PredType::NATIVE_DOUBLE, 2);
+
+    for (const auto &i : r0s) {
+      cout << i << "\n";
+    } cout << "\n";
+
+    for (const auto &d : ds) {
+      cout << d[0] << " " << d[1] << " " << d[2] << " " << d[3] << "\n";
+    } cout << "\n";
+
+    auto subgroups = laplace::hdf5::list_subgroups(h5File, "trajectory");
+    for (const auto &s : subgroups) {
+      cout << s << "\n";
+    } cout << "\n";
+*/
+
   } catch (const std::exception& e) {
     cout << e.what() << endl;
   }
+
 /*
   MPI_Init(&argc, &argv);
 
