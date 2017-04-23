@@ -2,6 +2,32 @@ import h5py
 import numpy as np
 import random, math
 
+def generate_atoms(h5file, path, num_atoms, compression=None):
+    def generate_random_data(n):
+        data = []
+        for i in range(n):
+            data.append((i, random.uniform(0, 10), random.uniform(0, 10),
+                         random.uniform(0, 10), random.uniform(0, 10)))
+        return data
+
+    if path not in h5file:
+        group = h5file.create_group(path)
+    else:
+        group = h5file[path]
+
+    compound_type = np.dtype([
+        # use long instead of int
+        ('gid', 'l'),
+        # use double instead of float
+        ('mass', 'd'),
+        ('sigma', 'd'),
+        ('epsilon', 'd'),
+        ('q', 'd'),
+    ])
+
+    bonds_dset = group.create_dataset("atoms", (num_atoms,), dtype=compound_type, compression=compression)
+    bonds_dset[...] = np.array(generate_random_data(num_atoms), dtype = compound_type)
+
 def generate_bonds(h5file, path, num_bonds, compression=None):
     def generate_random_data(n):
         data = []
@@ -87,7 +113,7 @@ def generate_torsions(h5file, path, dsetname, num_angles, compression=None):
     torsions_dset = group.create_dataset(dsetname, (num_angles,), dtype=compound_type, compression=compression)
     torsions_dset[...] = np.array(generate_random_data(num_angles), dtype = compound_type)
 
-def generate_nonbonded14(h5file, path, dsetname, num_angles, compression=None):
+def generate_nonbonded14(h5file, path, num_nonbonded, compression=None):
     def generate_random_data(n):
         data = []
         for i in range(n):
@@ -110,8 +136,8 @@ def generate_nonbonded14(h5file, path, dsetname, num_angles, compression=None):
         ('coeff_ele', 'd'),
     ])
 
-    torsions_dset = group.create_dataset(dsetname, (num_angles,), dtype=compound_type, compression=compression)
-    torsions_dset[...] = np.array(generate_random_data(num_angles), dtype = compound_type)
+    torsions_dset = group.create_dataset("nonbonded14s", (num_nonbonded,), dtype=compound_type, compression=compression)
+    torsions_dset[...] = np.array(generate_random_data(num_nonbonded), dtype = compound_type)
 
 def generate_trajectory(h5file, path, num_atoms, compression=None):
     group = h5file.create_group(path)
@@ -122,25 +148,10 @@ def generate_trajectory(h5file, path, num_atoms, compression=None):
     positions_dset[...] = np.random.uniform(1000, size=(num_atoms, 3))
 
 
-def generate_trajectory2(h5file, path, num_atoms, compression=None):
-    def generate_random_data(n):
-        data = []
-        for i in range(n):
-            data.append((i, random.uniform(0, 1000), random.uniform(0, 1000), random.uniform(0, 1000)))
-        return data
-
-    compound_type = np.dtype([
-        # use long instead of int
-        ('gid', 'l'),
-        # use double instead of float
-        ('x', 'd'),
-        ('y', 'd'),
-        ('z', 'd')
-    ])
-
+def generate_trajectory(h5file, path, num_atoms, compression=None):
     group = h5file.create_group(path)
-    positions_dset = group.create_dataset("positions", (num_atoms,), dtype=compound_type, compression=compression)
-    positions_dset[...] = np.array(generate_random_data(num_atoms), dtype = compound_type)
+    positions_dset = group.create_dataset("rvf", (num_atoms, 9), dtype='d', compression=compression)
+    positions_dset[...] = np.random.uniform(1000, size=(num_atoms, 9))
 
 
 def create_h5file():
@@ -153,13 +164,17 @@ def create_h5file():
     # (10M atoms is reasonable), the size of the snapshot is increased by ~40MB
     # If we remove all topology info and include only the trajectory, then the
     # file size diff is ~5MB (for 10000000 atoms)
-
-    generate_bonds(h5file, "topology", 100, compression)
-    generate_angles(h5file, "topology", 80, compression)
-    generate_torsions(h5file, "topology", "dihedrals", 80, compression)
-    generate_torsions(h5file, "topology", "impropers", 80, compression)
-    generate_nonbonded14(h5file, "topology", "nonbonded14", 3, compression)
-    generate_trajectory2(h5file, "trajectory/0000", 1000, compression)
+    topologyDir = "topology"
+    numAtoms = 100
+    generate_atoms(h5file, topologyDir, numAtoms, compression)
+    generate_bonds(h5file, topologyDir, 100, compression)
+    generate_angles(h5file, topologyDir, 80, compression)
+    generate_torsions(h5file, topologyDir, "dihedrals", 80, compression)
+    generate_torsions(h5file, topologyDir, "impropers", 80, compression)
+    generate_nonbonded14(h5file, topologyDir, 3, compression)
+    generate_trajectory(h5file, "trajectory/0000", 100, compression)
+    generate_trajectory(h5file, "trajectory/0001", 100, compression)
+    generate_trajectory(h5file, "trajectory/0002", 100, compression)
 
 def main():
     create_h5file()

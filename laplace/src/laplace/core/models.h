@@ -24,7 +24,13 @@ namespace laplace {
       masses.resize(n);
       sigma.resize(n);
       epsilon.resize(n);
+      q.resize(n);
     }
+
+    void load_topology(const H5::H5File &h5File);
+    void load_trajectory(const H5::H5File &h5File,
+                         const std::string &dataset);
+    void print_info() const;
   };
 
   /*
@@ -39,6 +45,9 @@ namespace laplace {
     int ids[2];
 
     static H5::CompType h5_type();
+    static std::string header_str();
+
+    std::string info_str() const;
   };
 
   struct Angle {
@@ -47,6 +56,9 @@ namespace laplace {
     int ids[3];
 
     static H5::CompType h5_type();
+    static std::string header_str();
+
+    std::string info_str() const;
   };
 
   struct Torsion {
@@ -56,6 +68,9 @@ namespace laplace {
     int multiplicity = 0;
 
     static H5::CompType h5_type();
+    static std::string header_str();
+
+    std::string info_str() const;
   };
 
   struct NonBonded14 {
@@ -64,6 +79,9 @@ namespace laplace {
     real coeff_ele;
 
     static H5::CompType h5_type();
+    static std::string header_str();
+
+    std::string info_str() const;
   };
 }
 

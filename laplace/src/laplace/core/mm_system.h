@@ -3,6 +3,7 @@
 
 #include "laplace/laplacepre.h"
 #include "laplace/core/models.h"
+#include <H5Cpp.h>
 
 namespace laplace {
   struct MmSystem {
@@ -13,7 +14,8 @@ namespace laplace {
     std::vector<Torsion> impropers;
     std::vector<NonBonded14> nonbonded14s;
 
-    static MmSystem load_from_file(const std::string &filepath);
+    static MmSystem load_from_file(const H5::H5File &h5File);
+    void print_info() const;
   };
 }
 
