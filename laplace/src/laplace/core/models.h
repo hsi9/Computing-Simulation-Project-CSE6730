@@ -28,9 +28,12 @@ namespace laplace {
     }
 
     void load_topology(const H5::H5File &h5File);
+    void load_latest_trajectory_snapshot(const H5::H5File &h5File);
     void load_trajectory(const H5::H5File &h5File,
                          const std::string &dataset);
     void print_info() const;
+    void write_trajectory_snapshot(H5::H5File &h5File,
+                                   const int64_t timestep) const;
   };
 
   /*
