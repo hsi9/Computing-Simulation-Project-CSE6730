@@ -6,7 +6,7 @@ using namespace laplace;
 using namespace laplace::hdf5;
 using namespace H5;
 
-MmSystem laplace::MmSystem::load_from_file(const H5::H5File &h5File) {
+MmSystem MmSystem::load_from_file(const H5::H5File &h5File) {
   MmSystem system;
   system.bonds = hdf5::load_struct_array<Bond>(h5File, "topology/bonds");
   system.angles = hdf5::load_struct_array<Angle>(h5File, "topology/angles");
@@ -14,8 +14,7 @@ MmSystem laplace::MmSystem::load_from_file(const H5::H5File &h5File) {
   system.impropers = hdf5::load_struct_array<Torsion>(h5File, "topology/impropers");
   system.nonbonded14s = hdf5::load_struct_array<NonBonded14>(h5File, "topology/nonbonded14s");
   system.atoms.load_topology(h5File);
-  // TODO: let load_trajectory() figure out which trajectory snapshot to load (latest by number)
-  system.atoms.load_trajectory(h5File, "trajectory/0000/rvf");
+  system.atoms.load_latest_trajectory_snapshot(h5File);
   return system;
 }
 

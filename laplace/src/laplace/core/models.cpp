@@ -1,6 +1,8 @@
 #include "laplace/core/models.h"
 #include "laplace/hdf5/h5_type.h"
 #include "laplace/hdf5/h5_read.h"
+#include "laplace/hdf5/h5_write.h"
+#include "laplace/hdf5/h5_util.h"
 #include <fmt/format.h>
 
 using namespace std;
@@ -59,8 +61,23 @@ void Atoms::load_topology(const H5::H5File &h5File) {
   q = hdf5::load_struct_array_column<real>(h5File, "topology/atoms", "q", H5::PredType::NATIVE_DOUBLE);
 }
 
+void Atoms::load_latest_trajectory_snapshot(const H5::H5File &h5File) {
+  int64_t max_idx = -1;
+  string max_idx_str;
+  for (const auto &idx_str : hdf5::list_subgroups(h5File, "trajectory")) {
+    int64_t new_idx = std::stoul(idx_str);
+    if (std::max(max_idx, new_idx) > max_idx) {
+      max_idx = new_idx;
+      max_idx_str = idx_str;
+    }
+  }
+  auto dataset = fmt::format("trajectory/{}/rvf", max_idx_str);
+  fmt::print("Loading latest trajectory snapshot: {}\n", dataset);
+  load_trajectory(h5File, dataset);
+}
+
 void Atoms::load_trajectory(const H5::H5File &h5File,
-                                     const string &dataset) {
+                            const string &dataset) {
   positions = hdf5::load_2d_array_n_columns<real, 3>(h5File, dataset, H5::PredType::NATIVE_DOUBLE, 0);
   velocities = hdf5::load_2d_array_n_columns<real, 3>(h5File, dataset, H5::PredType::NATIVE_DOUBLE, 3);
   forces = hdf5::load_2d_array_n_columns<real, 3>(h5File, dataset, H5::PredType::NATIVE_DOUBLE, 6);
@@ -122,4 +139,19 @@ void Atoms::print_info() const {
       forces[i][0], forces[i][1], forces[i][2]
     );
   }
+}
+
+void Atoms::write_trajectory_snapshot(H5::H5File &h5File,
+                                      const int64_t timestep) const {
+  hdf5::create_subgroup(h5File, fmt::format("trajectory/{:06d}", timestep));
+  auto dataset = hdf5::create_2d_array(
+    h5File,
+    fmt::format("trajectory/{:06d}/rvf", timestep),
+    positions.size(),
+    positions[0].size() * 3,
+    H5::PredType::NATIVE_DOUBLE
+  );
+  hdf5::write_2d_array_n_columns<real, 3>(dataset, positions, H5::PredType::NATIVE_DOUBLE, 0);
+  hdf5::write_2d_array_n_columns<real, 3>(dataset, velocities, H5::PredType::NATIVE_DOUBLE, 3);
+  hdf5::write_2d_array_n_columns<real, 3>(dataset, forces, H5::PredType::NATIVE_DOUBLE, 6);
 }

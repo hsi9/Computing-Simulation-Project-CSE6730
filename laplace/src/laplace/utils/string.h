@@ -15,6 +15,9 @@ namespace string {
   inline std::string strip_margin_replace_newlines(const std::string &s) {
     return std::regex_replace(s, margins_regex, " ");
   }
+
+  std::vector<std::string> split(const std::string &s, char delim);
+
 }}}
 
 #endif
