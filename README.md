@@ -6,7 +6,56 @@ This readme is formatted using Github-flavored Markdown. Learn more [here](https
 
 ## Meeting Notes
 
-Next meeting is **2017/4/2** 20:00.
+Next meeting is **2017/4/29** 19:00.
+
+### 2017/4/23 20:00
+
+### Project 3
+
+- [@bma36](https://github.gatech.edu/bma36):
+    - Code to write out trajectories to HDF5
+    - Integration code to string together reading input, running simulation, and dumping output
+    - Will implement at least LJ force computation.  If time permits, then also Bond/Angle/Dihedral and electrostatic force computation
+    - Finalize the config file / parameters
+- [@cseng3](https://github.gatech.edu/cseng3): Use a Topology / Force Field database (Force Field Parameters file, Parameters file, etc.) to convert a pdb (just bond information) file into a topology file (a list enumerating all bond, angle, dihedral, non-bond parameters) and a trajectory file (a list enumerating the (initial) atom positions)
+- [@hsi9](https://github.gatech.edu/hsi9) and [@fxiong32](https://github.gatech.edu/fxiong32): Trajectory energy calculation and visualization
+    - Run random_topology.py to generate random_topology.h5
+    - Look inside random_topology.h5 with the hdfview program, figure out the structure. If you need help with the structure, the python script shows how the file was created. Other examples in C++ are in links on the Slack and Google Hangouts history.
+    - Create a script in whatever language that calculates and outputs the energy of each particle.
+    - Perform a visualization of the output using any visualizer.
+- [@ssugimoto3](https://github.gatech.edu/ssugimoto3): Force calculator for bonds, dihedrals (proper torsions), improper torsions
+
+### 2017/4/21
+
+[Project 2](https://www.dropbox.com/s/2nmxho8xgt71p57/cse6730.zip?dl=0) turned in. Dropbox link will be alive until [@ssugimoto3](https://github.gatech.edu/ssugimoto3) finds it no longer relevant and deletes it.
+
+### 2017/4/9, 2017/4/16
+
+Project 2
+
+---
+
+#### Project 2
+
+Project due 2017/4/21. **All code due 2017/4/18**.
+
+- Non-distributed: Just logging left
+- Trace-viewer: gl;hf
+
+#### Project 3
+
+Project due 2017/4/30? ~~**All code due 2017/4/25**~~ **REMOVED: Unrealistic deadline**.
+
+- Proposal: Writing and turning it in 2017/4/10 (Assigned [@ssugimoto3](https://github.gatech.edu/ssugimoto3))
+- Division of labor: *First come first serve*. Take your pick.
+
+---
+
+### 2017/4/2 20:00
+
+Meeting postponed.
+
+---
 
 ### 2017/3/26 20:30
 
@@ -25,6 +74,8 @@ Changes to assignments:
 - Reassigning non-distributed to [@hsi9](https://github.gatech.edu/hsi9) and [@fxiong32](https://github.gatech.edu/fxiong32). Notification around 2017/3/31 to [@ssugimoto3](https://github.gatech.edu/ssugimoto3) if dropping it due to workload.
 - Adding [@ssugimoto3](https://github.gatech.edu/ssugimoto3) to Trace-Viewer if help requested by 2017/3/31.
 - **Moving code writing due date to 2017/4/7.** Meeting on 2017/4/2 will be progress report 2, with possible discussion on starting the report and video presentation. Meeting on 2017/4/9 will touch on code review if necessary and will focus on report writing and video presentation creation.
+
+---
 
 ### 2017/3/19 20:20
 
