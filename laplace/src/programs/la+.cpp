@@ -1,6 +1,7 @@
 #include "laplace/config/simulation_config.h"
 #include "laplace/utils/openmp.h"
 #include "laplace/core/mm_system.h"
+#include "laplace/core/md.h"
 #include <fmt/format.h>
 #include <docoptcpp/docopt.h>
 #include <iostream>
@@ -42,9 +43,10 @@ int main(int argc, char **argv) {
     mmsystem.print_info();
 
     // copy the trajectory to two snapeshots in the outfile
-    H5::H5File outFile(args["--out"].asString(), H5F_ACC_TRUNC);
-    mmsystem.atoms.write_trajectory_snapshot(outFile, 42);
-    mmsystem.atoms.write_trajectory_snapshot(outFile, 43);
+    H5::H5File outfile(args["--out"].asString(), H5F_ACC_TRUNC);
+    // mmsystem.atoms.write_trajectory_snapshot(outFile, 42);
+    // mmsystem.atoms.write_trajectory_snapshot(outFile, 43);
+    laplace::run_md(outfile, mmsystem, config);
 
   } catch (const std::exception& e) {
     cout << e.what() << endl;
