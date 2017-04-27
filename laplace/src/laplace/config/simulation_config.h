@@ -3,6 +3,10 @@
 
 #include "laplace/laplacepre.h"
 #include "laplace/config/t_coupling_config.h"
+#include "laplace/config/run_config.h"
+#include "laplace/config/ns_config.h"
+#include "laplace/config/box_config.h"
+#include "laplace/config/output_config.h"
 #include <yaml-cpp/yaml.h>
 #include <ostream>
 
@@ -10,6 +14,10 @@ namespace laplace {
 namespace config {
   struct SimulationConfig {
     TCouplingConfig tcoupling;
+    RunConfig run;
+    NeighborSearchConfig neighbor_search;
+    BoxConfig box;
+    OutputConfig output;
 
     bool operator==(SimulationConfig other) const;
 
