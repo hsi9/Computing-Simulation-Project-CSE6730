@@ -151,7 +151,11 @@ def generate_trajectory(h5file, path, num_atoms, compression=None):
 def generate_trajectory(h5file, path, num_atoms, compression=None):
     group = h5file.create_group(path)
     positions_dset = group.create_dataset("rvf", (num_atoms, 9), dtype='d', compression=compression)
-    positions_dset[...] = np.random.uniform(1000, size=(num_atoms, 9))
+    traj = np.random.uniform(5, size=(num_atoms, 9))
+    traj[:,0:3] = np.random.uniform(10, size=(num_atoms, 3))
+    traj[:,3:6] = np.random.normal(0, 5, size=(num_atoms, 3))
+    traj[:,6:9] = np.random.normal(0, 3, size=(num_atoms, 3))
+    positions_dset[...] = traj
 
 
 def create_h5file():
@@ -165,16 +169,16 @@ def create_h5file():
     # If we remove all topology info and include only the trajectory, then the
     # file size diff is ~5MB (for 10000000 atoms)
     topologyDir = "topology"
-    numAtoms = 100
+    numAtoms = 3000
     generate_atoms(h5file, topologyDir, numAtoms, compression)
     generate_bonds(h5file, topologyDir, 100, compression)
     generate_angles(h5file, topologyDir, 80, compression)
     generate_torsions(h5file, topologyDir, "dihedrals", 80, compression)
     generate_torsions(h5file, topologyDir, "impropers", 80, compression)
     generate_nonbonded14(h5file, topologyDir, 3, compression)
-    generate_trajectory(h5file, "trajectory/0000", 100, compression)
-    generate_trajectory(h5file, "trajectory/0001", 100, compression)
-    generate_trajectory(h5file, "trajectory/0002", 100, compression)
+    generate_trajectory(h5file, "trajectory/0000", numAtoms, compression)
+    generate_trajectory(h5file, "trajectory/0001", numAtoms, compression)
+    generate_trajectory(h5file, "trajectory/0002", numAtoms, compression)
 
 def main():
     create_h5file()
