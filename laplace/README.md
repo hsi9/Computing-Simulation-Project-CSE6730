@@ -49,9 +49,18 @@ $ make docs
 $ ctest -VV
 $ make test
 
+# Generate random topology file as input
+$ cd ../src/topogen
+$ python random_topology.py
+$ ls
+random_topology.h5 random_topology.py
+$ cd ../../target
+
 # Run program
 $ bin/la+ -h
-$ mpirun -np 4 bin/la+ mdrun --config ../config.yaml
+$ bin/la+ --config ../config.yaml --data ../src/topogen/random_topology.h5 --out sample_output.h5
+# MPI not supported yet
+# $ mpirun -np 4 bin/la+ --config ../config.yaml
 
 # Install the built libraries, binaries, docs into
 # <prefix>/lib, <prefix>/bin, and <prefix>/share, respectively
@@ -114,5 +123,7 @@ $ mkdir target && cd target/
 # OpenMP_CXX_FLAGS: Compiler and linker flags for OpenMP
 # HDF5_ROOT: Location of HDF5 library (Moving from airport-scala to laplace with the same HDF5 (using CMake, with Java bindings) failed without this)
 $ cmake -D CMAKE_BUILD_TYPE=Release -D LAPLACE_TESTS=1 -D LAPLACE_DOCS=1 -D MPI_C_LIBRARIES=/usr/local/opt/open-mpi/lib/libmpi.dylib -D MPI_C_INCLUDE_PATH=/usr/local/opt/open-mpi/include -D MPI_CXX_LIBRARIES=/usr/local/opt/open-mpi/lib/libmpi.dylib -D MPI_CXX_INCLUDE_PATH=/usr/local/opt/open-mpi/include -D CMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -D CMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ -D OpenMP_C_FLAGS='-I/usr/local/opt/llvm/include -L/usr/local/opt/llvm/lib -fopenmp' -D OpenMP_CXX_FLAGS='-I/usr/local/opt/llvm/include -L/usr/local/opt/llvm/lib -fopenmp' -D HDF5_ROOT=/usr/local/opt/hdf5 -D HDF5_LIBRARY_DIRS=/usr/local/opt/hdf5/lib -D HDF5_INCLUDE_DIRS=/usr/local/opt/hdf5/include -D HDF5_CXX_LIBRARIES=/usr/local/opt/hdf5/lib/libhdf5_cpp.dylib ..
+
+# Instructions after CMake succeeds are the same as the CentOS 7 instructions
 ```
 
