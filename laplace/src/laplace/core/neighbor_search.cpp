@@ -4,7 +4,6 @@ using namespace std;
 using namespace laplace;
 
 void laplace::perform_neighbor_search(vector<array<int, 2>> &pairs,
-                                      vector<real> &distances2,
                                       const MmSystem &system,
                                       const real L[3],
                                       const int boxdims[3],
@@ -52,8 +51,7 @@ void laplace::perform_neighbor_search(vector<array<int, 2>> &pairs,
 
             // if the distance is within the threshold, then add to pairs
             if ((d2 = dx*dx+dy*dy+dz*dz) < cutoff2) {
-              pairs.emplace_back(array<int, 2>{ p1, p2 });
-              distances2.emplace_back(d2);
+              pairs.emplace_back(array<int, 2>{ p1+1, p2+1 });
             }
 
             p2 = next[p2];
@@ -94,8 +92,7 @@ void laplace::perform_neighbor_search(vector<array<int, 2>> &pairs,
               // if the distance is within the threshold, then add to pairs
               // check for p1 < p2 to avoid duplicate pairs
               if ((d2 = dx*dx+dy*dy+dz*dz) < cutoff2 and p1 < p2) {
-                pairs.emplace_back(array<int, 2>{ p1, p2 });
-                distances2.emplace_back(d2);
+                pairs.emplace_back(array<int, 2>{ p1+1, p2+1 });
               }
 
               p2 = next[p2];

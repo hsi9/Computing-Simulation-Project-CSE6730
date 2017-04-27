@@ -47,7 +47,6 @@ void laplace::run_md(H5::H5File &outfile,
     if (timestep % config.neighbor_search.interval == 0) {
       laplace::perform_neighbor_search(
         pairs,
-        distances2,
         system,
         config.box.L,
         config.box.celldims,
@@ -55,10 +54,11 @@ void laplace::run_md(H5::H5File &outfile,
       );
     }
 
-    // TODO FIX THIS
-    /*else {
-      compute distances2;
-    }*/
+    /*
+      Separately compute the R^2 values between all pairs.
+      This value is needed for both L-J and electrostatic force computations.
+    */
+    compute_distance2(distances2, system, pairs, config.box.L);
 
     /*
       Update non-bonded forces according to the Lennard-Jones formulation
@@ -96,6 +96,7 @@ void laplace::run_md(H5::H5File &outfile,
     */
     if (timestep % config.output.interval == 0) {
       fmt::print("STEP {:d}: WRITING TO FILE\n", timestep);
+      fmt::print("  {:> 13.5g}{:> 13.5g}{:> 13.5g}\n", system.atoms.positions[0][0], system.atoms.positions[0][1], system.atoms.positions[0][2]);
       system.atoms.write_trajectory_snapshot(outfile, timestep);
     }
   }

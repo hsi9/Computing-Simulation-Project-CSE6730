@@ -29,7 +29,6 @@ namespace laplace {
   };
 
   void perform_neighbor_search(std::vector<std::array<int, 2>> &pairs,
-                               std::vector<real> &distances2,
                                const MmSystem &system,
                                const real L[3],
                                const int boxdims[3],
