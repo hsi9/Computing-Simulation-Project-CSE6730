@@ -18,7 +18,7 @@ def compute_energies(topo_file, traj_file):
             x, y, z = velocities[i][0], velocities[i][1], velocities[i][2]
             energy += 0.5 * masses[i] * (x*x + y*y + z*z)
 
-        print "{}: {}".format(step, energy)
+        print("{}: {}".format(step, energy))
 
 def main():
     compute_energies(sys.argv[1], sys.argv[2])
