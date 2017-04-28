@@ -6,7 +6,7 @@ def generate_atoms(h5file, path, num_atoms, compression=None):
     def generate_random_data(n):
         data = []
         for i in range(n):
-            data.append((i, random.uniform(0, 5), random.uniform(0, 1.5),
+            data.append((i, random.uniform(1, 5), random.uniform(0, 1.5),
                          random.uniform(0, 1.5), random.uniform(-1, 1)))
         return data
 
