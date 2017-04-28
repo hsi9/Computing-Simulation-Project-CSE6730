@@ -17,7 +17,7 @@ tcoupling:
   heating-steps: 3
   nh-chain-length: 10
 output:
-  interval: 20
+  interval: 1
 mpi:
   # grid dimensions; the number of processors used in mpirun should equal the product
   dimensions: [ 2, 2, 2 ]
