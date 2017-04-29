@@ -3,6 +3,7 @@
 #include "laplace/core/nonbonded_sr.h"
 #include "laplace/core/integration.h"
 #include <fmt/format.h>
+#include <algorithm>
 
 using namespace laplace;
 using namespace std;
@@ -10,10 +11,8 @@ using namespace std;
 void laplace::run_md(H5::H5File &outfile,
                      MmSystem &system,
                      const config::SimulationConfig &config) {
-
   // initialize temp data once - this is not necessary, but is done as optimization to avoid re-allocating memory each time
   vector<array<int, 2>> pairs;
-  vector<real> distances2;
 
   // allocate memory for the previous timestep's forces
   system.atoms.forces_old.resize(system.atoms.forces.size());
@@ -37,6 +36,19 @@ void laplace::run_md(H5::H5File &outfile,
 
   auto current_time = config.run.tinit;
   for (auto timestep=0; timestep < config.run.steps; timestep++, current_time += config.run.dt) {
+    /*
+      Zero out the forces prior to re-computation.  Use std::fill here instead of memset()
+      because it is portable and it is forward-compatible with C++17 std::fill
+      which allows for parallel/vector execution policy.
+
+      No need to zero out the velocities because that is implicitly done
+      by the integration step.
+    */
+    std::fill(
+      &system.atoms.forces[0][0],
+      &system.atoms.forces[0][0] + forces.size() * laplace::DIMS,
+      0
+    );
 
     /*
       Recreate the neighbor lists at a certain interval.
@@ -55,18 +67,11 @@ void laplace::run_md(H5::H5File &outfile,
     }
 
     /*
-      Separately compute the R^2 values between all pairs.
-      This value is needed for both L-J and electrostatic force computations.
-    */
-    compute_distance2(distances2, system, pairs, config.box.L);
-
-    /*
       Update non-bonded forces according to the Lennard-Jones formulation
     */
     laplace::nonbonded_sr_forces_update(
       system,
       pairs,
-      distances2,
       config.box.L,
       rcut2
     );
@@ -96,7 +101,6 @@ void laplace::run_md(H5::H5File &outfile,
     */
     if (timestep % config.output.interval == 0) {
       fmt::print("STEP {:d}: WRITING TO FILE\n", timestep);
-      fmt::print("  {:> 13.5g}{:> 13.5g}{:> 13.5g}\n", system.atoms.positions[0][0], system.atoms.positions[0][1], system.atoms.positions[0][2]);
       system.atoms.write_trajectory_snapshot(outfile, timestep);
     }
   }

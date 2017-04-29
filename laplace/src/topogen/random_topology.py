@@ -6,8 +6,8 @@ def generate_atoms(h5file, path, num_atoms, compression=None):
     def generate_random_data(n):
         data = []
         for i in range(n):
-            data.append((i, random.uniform(0, 10), random.uniform(0, 10),
-                         random.uniform(0, 10), random.uniform(0, 10)))
+            data.append((i, random.uniform(1, 5), random.uniform(0.5, 1.5),
+                         random.uniform(0.5, 1.5), random.uniform(-1, 1)))
         return data
 
     if path not in h5file:
@@ -139,22 +139,14 @@ def generate_nonbonded14(h5file, path, num_nonbonded, compression=None):
     torsions_dset = group.create_dataset("nonbonded14s", (num_nonbonded,), dtype=compound_type, compression=compression)
     torsions_dset[...] = np.array(generate_random_data(num_nonbonded), dtype = compound_type)
 
-def generate_trajectory(h5file, path, num_atoms, compression=None):
-    group = h5file.create_group(path)
-    ids_dset = group.create_dataset("gids", (num_atoms, 1), dtype='l', compression=compression)
-    ids_dset[...] = np.random.uniform(1000, size=(num_atoms, 1))
-
-    positions_dset = group.create_dataset("positions", (num_atoms, 3), dtype='d', compression=compression)
-    positions_dset[...] = np.random.uniform(1000, size=(num_atoms, 3))
-
 
 def generate_trajectory(h5file, path, num_atoms, compression=None):
     group = h5file.create_group(path)
     positions_dset = group.create_dataset("rvf", (num_atoms, 9), dtype='d', compression=compression)
     traj = np.random.uniform(5, size=(num_atoms, 9))
-    traj[:,0:3] = np.random.uniform(10, size=(num_atoms, 3))
-    traj[:,3:6] = np.random.normal(0, 5, size=(num_atoms, 3))
-    traj[:,6:9] = np.random.normal(0, 3, size=(num_atoms, 3))
+    traj[:,0:3] = np.random.uniform(60.1, size=(num_atoms, 3))
+    traj[:,3:6] = np.random.normal(0, 2, size=(num_atoms, 3))
+    traj[:,6:9] = np.random.normal(0, 1, size=(num_atoms, 3))
     positions_dset[...] = traj
 
 
@@ -169,7 +161,7 @@ def create_h5file():
     # If we remove all topology info and include only the trajectory, then the
     # file size diff is ~5MB (for 10000000 atoms)
     topologyDir = "topology"
-    numAtoms = 3000
+    numAtoms = 1000
     generate_atoms(h5file, topologyDir, numAtoms, compression)
     generate_bonds(h5file, topologyDir, 100, compression)
     generate_angles(h5file, topologyDir, 80, compression)

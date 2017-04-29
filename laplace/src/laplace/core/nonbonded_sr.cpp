@@ -24,7 +24,6 @@ void laplace::compute_distance2(vector<real> &distances2,
 
 void laplace::nonbonded_sr_forces_update(MmSystem &system,
                                          const vector<array<int, 2>> &pairs,
-                                         const vector<real> &distances2,
                                          const real L[3],
                                          const real r_cut2) {
   auto &positions = system.atoms.positions;
@@ -50,7 +49,7 @@ void laplace::nonbonded_sr_forces_update(MmSystem &system,
     real dx = remainder(positions[idx1][0] - positions[idx2][0], L[0]);
     real dy = remainder(positions[idx1][1] - positions[idx2][1], L[1]);
     real dz = remainder(positions[idx1][2] - positions[idx2][2], L[2]);
-    real r2 = distances2[i];
+    real r2 = dx*dx + dy*dy + dz*dz;
 
     if (r2 <= r_cut2) {
       real _sigma = (real)0.5 * (sigma[idx1] + sigma[idx2]);
