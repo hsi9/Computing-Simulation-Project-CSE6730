@@ -3,6 +3,7 @@
 #include "laplace/core/nonbonded_sr.h"
 #include "laplace/core/integration.h"
 #include <fmt/format.h>
+#include <algorithm>
 
 using namespace laplace;
 using namespace std;
@@ -10,7 +11,6 @@ using namespace std;
 void laplace::run_md(H5::H5File &outfile,
                      MmSystem &system,
                      const config::SimulationConfig &config) {
-
   // initialize temp data once - this is not necessary, but is done as optimization to avoid re-allocating memory each time
   vector<array<int, 2>> pairs;
 
@@ -36,6 +36,19 @@ void laplace::run_md(H5::H5File &outfile,
 
   auto current_time = config.run.tinit;
   for (auto timestep=0; timestep < config.run.steps; timestep++, current_time += config.run.dt) {
+    /*
+      Zero out the forces prior to re-computation.  Use std::fill here instead of memset()
+      because it is portable and it is forward-compatible with C++17 std::fill
+      which allows for parallel/vector execution policy.
+
+      No need to zero out the velocities because that is implicitly done
+      by the integration step.
+    */
+    std::fill(
+      &system.atoms.forces[0][0],
+      &system.atoms.forces[0][0] + forces.size() * laplace::DIMS,
+      0
+    );
 
     /*
       Recreate the neighbor lists at a certain interval.
