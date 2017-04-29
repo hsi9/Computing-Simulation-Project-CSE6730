@@ -8,6 +8,8 @@ void laplace::perform_neighbor_search(vector<array<int, 2>> &pairs,
                                       const real L[3],
                                       const int boxdims[3],
                                       const real cutoff2) {
+  // CLEAR EXISTING PAIRS!
+  pairs.clear();
   auto &positions = system.atoms.positions;
 
   // allocate implied linked list

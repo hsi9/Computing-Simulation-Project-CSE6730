@@ -13,7 +13,6 @@ void laplace::run_md(H5::H5File &outfile,
 
   // initialize temp data once - this is not necessary, but is done as optimization to avoid re-allocating memory each time
   vector<array<int, 2>> pairs;
-  vector<real> distances2;
 
   // allocate memory for the previous timestep's forces
   system.atoms.forces_old.resize(system.atoms.forces.size());
@@ -55,18 +54,11 @@ void laplace::run_md(H5::H5File &outfile,
     }
 
     /*
-      Separately compute the R^2 values between all pairs.
-      This value is needed for both L-J and electrostatic force computations.
-    */
-    compute_distance2(distances2, system, pairs, config.box.L);
-
-    /*
       Update non-bonded forces according to the Lennard-Jones formulation
     */
     laplace::nonbonded_sr_forces_update(
       system,
       pairs,
-      distances2,
       config.box.L,
       rcut2
     );
@@ -96,7 +88,6 @@ void laplace::run_md(H5::H5File &outfile,
     */
     if (timestep % config.output.interval == 0) {
       fmt::print("STEP {:d}: WRITING TO FILE\n", timestep);
-      fmt::print("  {:> 13.5g}{:> 13.5g}{:> 13.5g}\n", system.atoms.positions[0][0], system.atoms.positions[0][1], system.atoms.positions[0][2]);
       system.atoms.write_trajectory_snapshot(outfile, timestep);
     }
   }

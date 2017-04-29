@@ -2,7 +2,7 @@ run:
   integrator: VELOCITY_VERLET
   steps: 1000
   # once bonds and angles and dihedrals are set, dt must be set to at much lower, i.e. 0.002
-  dt: 0.2
+  dt: 0.02
   tinit: 0     # time of the zeroth timestep
 box:
   L: [ 60.1, 60.1, 60.1 ]
