@@ -139,14 +139,6 @@ def generate_nonbonded14(h5file, path, num_nonbonded, compression=None):
     torsions_dset = group.create_dataset("nonbonded14s", (num_nonbonded,), dtype=compound_type, compression=compression)
     torsions_dset[...] = np.array(generate_random_data(num_nonbonded), dtype = compound_type)
 
-def generate_trajectory(h5file, path, num_atoms, compression=None):
-    group = h5file.create_group(path)
-    ids_dset = group.create_dataset("gids", (num_atoms, 1), dtype='l', compression=compression)
-    ids_dset[...] = np.random.uniform(1000, size=(num_atoms, 1))
-
-    positions_dset = group.create_dataset("positions", (num_atoms, 3), dtype='d', compression=compression)
-    positions_dset[...] = np.random.uniform(1000, size=(num_atoms, 3))
-
 
 def generate_trajectory(h5file, path, num_atoms, compression=None):
     group = h5file.create_group(path)
