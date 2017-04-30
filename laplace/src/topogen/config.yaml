@@ -1,0 +1,19 @@
+---
+dataDir: "C:/Users/212326006/Documents/python/laplace/Data" # Directory containing topology and trajectory files
+outputFilename: "1EDN_water_topology.h5"
+molecules:
+    - name: MYMOL
+      topologyFile: 1EDN_OUT.tpl            # Topology file
+      trajectoryFile: 1EDN_OUT.pdb          # Trajectory file
+      nMolecules: 1                         # Number of molecules
+      placement: FIXED                      # Placement type: FIXED or RANDOM
+      offset: [0,0,0]                       # Offset. Used only with FIXED Placement
+    - name: tip3p_water
+      topologyFile: metals.tpl
+      trajectoryFile: water.pdb
+      nMolecules: 100
+      placement: RANDOM
+      boundaries: [37.43399864, -0.801999092, 
+                   15.45899987, -13.72599953,
+                  -39.95800114, -18.12900043] # Boundaries for molecule placement. Used only with RANDOM placement
+...
