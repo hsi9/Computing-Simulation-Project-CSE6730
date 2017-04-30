@@ -118,7 +118,7 @@ def read_torsions(filename, header, moleculeName, ao=0):
 def atoms_to_array(atoms):
 	data = []
 	for i, atom in enumerate(atoms):
-		data.append((i,atom['mass'],atom['radius'],atom['charge'],0.0)) # I don't know what q is.
+		data.append((i,atom['mass'],atom['radius'],atom['radius'],atom['charge']))
 	return data
 	
 def bonds_to_array(bonds):
