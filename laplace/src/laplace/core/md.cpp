@@ -46,7 +46,7 @@ void laplace::run_md(H5::H5File &outfile,
     */
     std::fill(
       &system.atoms.forces[0][0],
-      &system.atoms.forces[0][0] + forces.size() * laplace::DIMS,
+      &system.atoms.forces[0][0] + system.atoms.forces.size() * laplace::DIMS,
       0
     );
 
