@@ -2,6 +2,7 @@
 
 #include "laplace/core/bond.h"
 #include "laplace/core/angle.h"
+#include "laplace/core/dihedral.h"
 #include "laplace/core/neighbor_search.h"
 #include "laplace/core/nonbonded_sr.h"
 #include "laplace/core/integration.h"
@@ -82,6 +83,7 @@ void laplace::run_md(H5::H5File &outfile,
 
     laplace::bond_forces_update(system, config.box.L);
     laplace::angle_forces_update(system, config.box.L);
+    laplace::dihedral_forces_update(system, config.box.L);
 
     /*
       Perform integration - compute velocities and positions at next time step.
