@@ -28,11 +28,11 @@ def generate_atoms(h5file, path, num_atoms, compression=None):
     bonds_dset = group.create_dataset("atoms", (num_atoms,), dtype=compound_type, compression=compression)
     bonds_dset[...] = np.array(generate_random_data(num_atoms), dtype = compound_type)
 
-def generate_bonds(h5file, path, num_bonds, compression=None):
+def generate_bonds(h5file, path, num_atoms, num_bonds, compression=None):
     def generate_random_data(n):
         data = []
         for i in range(n):
-            data.append((i, random.randint(0, 10000), random.randint(0, 10000),
+            data.append((i, random.randint(0, num_atoms-1), random.randint(0, num_atoms-1),
                          random.uniform(0, 10), random.uniform(0, 10)))
         return data
 
@@ -55,11 +55,11 @@ def generate_bonds(h5file, path, num_bonds, compression=None):
     bonds_dset[...] = np.array(generate_random_data(num_bonds), dtype = compound_type)
 
 
-def generate_angles(h5file, path, num_angles, compression=None):
+def generate_angles(h5file, path, num_atoms, num_angles, compression=None):
     def generate_random_data(n):
         data = []
         for i in range(n):
-            data.append((i, random.randint(0, 10000), random.randint(0, 10000), random.randint(0, 10000),
+            data.append((i, random.randint(0, num_atoms-1), random.randint(0, num_atoms-1), random.randint(0, num_atoms-1),
                          random.uniform(0, math.pi), random.uniform(0, 10)))
         return data
 
@@ -83,12 +83,12 @@ def generate_angles(h5file, path, num_angles, compression=None):
     angles_dset[...] = np.array(generate_random_data(num_angles), dtype = compound_type)
 
 
-def generate_torsions(h5file, path, dsetname, num_angles, compression=None):
+def generate_torsions(h5file, path, dsetname, num_atoms, num_angles, compression=None):
     def generate_random_data(n):
         data = []
         for i in range(n):
-            data.append((i, random.randint(0, 10000), random.randint(0, 10000),
-                         random.randint(0, 10000), random.randint(0, 10000),
+            data.append((i, random.randint(0, num_atoms-1), random.randint(0, num_atoms-1),
+                         random.randint(0, num_atoms-1), random.randint(0, num_atoms-1),
                          random.uniform(0, math.pi), random.uniform(0, 10), random.randint(0, 3)))
         return data
 
@@ -113,11 +113,11 @@ def generate_torsions(h5file, path, dsetname, num_angles, compression=None):
     torsions_dset = group.create_dataset(dsetname, (num_angles,), dtype=compound_type, compression=compression)
     torsions_dset[...] = np.array(generate_random_data(num_angles), dtype = compound_type)
 
-def generate_nonbonded14(h5file, path, num_nonbonded, compression=None):
+def generate_nonbonded14(h5file, path, num_atoms, num_nonbonded, compression=None):
     def generate_random_data(n):
         data = []
         for i in range(n):
-            data.append((i, random.randint(0, 10000), random.randint(0, 10000),
+            data.append((i, random.randint(0, num_atoms-1), random.randint(0, num_atoms-1),
                          random.uniform(0, 1000), random.uniform(0, 1000)))
         return data
 
@@ -163,11 +163,11 @@ def create_h5file():
     topologyDir = "topology"
     numAtoms = 1000
     generate_atoms(h5file, topologyDir, numAtoms, compression)
-    generate_bonds(h5file, topologyDir, 100, compression)
-    generate_angles(h5file, topologyDir, 80, compression)
-    generate_torsions(h5file, topologyDir, "dihedrals", 80, compression)
-    generate_torsions(h5file, topologyDir, "impropers", 80, compression)
-    generate_nonbonded14(h5file, topologyDir, 3, compression)
+    generate_bonds(h5file, topologyDir, numAtoms, 100, compression)
+    generate_angles(h5file, topologyDir, numAtoms, 80, compression)
+    generate_torsions(h5file, topologyDir, "dihedrals", numAtoms, 80, compression)
+    generate_torsions(h5file, topologyDir, "impropers", numAtoms, 80, compression)
+    generate_nonbonded14(h5file, topologyDir, numAtoms, 3, compression)
     generate_trajectory(h5file, "trajectory/0000", numAtoms, compression)
     generate_trajectory(h5file, "trajectory/0001", numAtoms, compression)
     generate_trajectory(h5file, "trajectory/0002", numAtoms, compression)
